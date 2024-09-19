@@ -24,7 +24,7 @@ public class MenuService {
 
 
     // 메뉴 생성
-    public MenuResponse saveMenu(Long storeId, MenuSaveRequest menuSaveRequest) {
+    public MenuResponse createMenu(Long storeId, MenuSaveRequest menuSaveRequest) {
 
         Stores store = storesRepository.findById(storeId)
                 .orElseThrow(() -> new NullPointerException("store not found"));
@@ -96,6 +96,8 @@ public class MenuService {
     public void deleteMenu(Long menuId, MenuDeleteRequest menuDeleteRequest) {
 
         Menu menu = findMenuById(menuId);
+
+        // menuDeleteRequest 로 확인 필요
 
         // 사용자가 존재하는지 확인하는 부분
 
