@@ -1,5 +1,6 @@
 package com.sparta.outsourcing.domain.menu.entity;
 
+import com.sparta.outsourcing.domain.menu.dto.request.MenuSaveRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,13 +32,10 @@ public class Menu {
 //    private Store store;
 
 
-    public static Menu createMenu(String name, String description, Integer price) {
-        Menu menu = new Menu();
-        menu.name = name;
-        menu.description = description;
-        menu.price = price;
-
-        return menu;
+    public Menu(String name, String description, Integer price) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
     }
 
     public void update(String name , String description, Integer price) {
