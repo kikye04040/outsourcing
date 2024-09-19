@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,5 +97,24 @@ public class Stores {
 
     public void setStoreStatus(StoreStatus storeStatus){
         this.storeStatus = storeStatus;
+    }
+
+    // 가게가 현재 영업 중인지 체크하는 메서드
+    public boolean isOpen() {
+        // 현재 시간이 가게의 오픈 시간과 마감 시간 사이에 있는지 확인
+        String[] hours = operationHours.split("-");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        LocalTime openTime = LocalTime.parse(hours[0], formatter);
+        LocalTime closeTime = LocalTime.parse(hours[1], formatter);
+        LocalTime now = LocalTime.now();
+
+        // 오늘이 영업일인지 확인 (closedDays가 있으면 영업하지 않음)
+        String today = LocalDate.now().getDayOfWeek().toString();  // 예: "SUNDAY"
+        if (closedDays != null && closedDays.toUpperCase().contains(today)) {
+            return false;  // 오늘은 영업하지 않음
+        }
+
+        return now.isAfter(openTime) && now.isBefore(closeTime);
     }
 }

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StoresService {
     private final StoresRepository storesRepository;
 
+    @PreAuthorize("hasAuthority('CEO')")
     public StoreResponseDto createStore(StoreCreatedRequestDto req) {
         // token으로 유저 확인
 
@@ -125,4 +127,5 @@ public class StoresService {
             200
         );
     }
+
 }
