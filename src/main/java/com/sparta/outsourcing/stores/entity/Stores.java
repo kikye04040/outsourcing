@@ -1,5 +1,7 @@
 package com.sparta.outsourcing.stores.entity;
 
+import com.sparta.outsourcing.order.entity.Order;
+import com.sparta.outsourcing.review.entity.Review;
 import com.sparta.outsourcing.stores.enums.StoreStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -54,15 +56,19 @@ public class Stores {
     @Enumerated(EnumType.STRING)
     private StoreStatus storeStatus;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "userId", nullable = false)
+//    private User user;
 
-//    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
-//    private List<Reviews> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+    private List<Review> reviews = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
 //    private List<Menu> Menu = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
-//    private List<Orders> Orders = new ArrayList<>();
+//    private List<Order> Orders = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
 //    private List<Carts> Carts = new ArrayList<>();
