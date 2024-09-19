@@ -1,19 +1,20 @@
 package com.sparta.outsourcing.order.dto;
 
-import com.sparta.outsourcing.order.orderstatusenum.OrderStatus;
+import com.sparta.outsourcing.order.entity.Order;
+import com.sparta.outsourcing.order.enums.OrderStatusEnum;
 import lombok.Getter;
 
 @Getter
 public class OrderResponseDto {
     private Long orderId;
-    private Long storeId;
-    private OrderStatus status;
+    private String status;
     private int totalPrice;
+    private LogResponseDto log;
 
-    public OrderResponseDto(Long orderId, Long storeId, OrderStatus status, int totalPrice) {
-        this.orderId = orderId;
-        this.storeId = storeId;
-        this.status = status;
-        this.totalPrice = totalPrice;
+    public OrderResponseDto(Order order) {
+        this.orderId = order.getId();
+        this.status = order.getStatus().toString();
+        this.totalPrice = order.getTotalPrice();
+        this.log = new LogResponseDto(order.getId(), order.getStore().getStoreId());
     }
 }

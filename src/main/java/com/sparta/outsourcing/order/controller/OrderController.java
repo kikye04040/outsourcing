@@ -1,5 +1,6 @@
 package com.sparta.outsourcing.order.controller;
 
+import com.sparta.outsourcing.order.dto.OrderRequestDto;
 import com.sparta.outsourcing.order.dto.OrderResponseDto;
 import com.sparta.outsourcing.order.entity.Order;
 import com.sparta.outsourcing.order.service.OrderService;
@@ -14,9 +15,9 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping("/create")
-    public ResponseEntity<OrderResponseDto> createOrder(@RequestParam Long storeId, @RequestParam Long menuId, @RequestParam int totalPrice) {
-        Order order = orderService.createOrder(storeId, menuId, totalPrice);
-        return ResponseEntity.ok(order);
+    @PostMapping("/{storeId}/order")
+    public ResponseEntity<OrderResponseDto> createOrder(@PathVariable Long storeId, @RequestBody OrderRequestDto requestDto) {
+        Order order = orderService.createOrder(storeId, requestDto.getMenu(), requestDto.getTotalPrice());
+        return ResponseEntity.ok(new OrderResponseDto(order));
     }
 }
