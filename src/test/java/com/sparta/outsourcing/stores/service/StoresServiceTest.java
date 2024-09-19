@@ -1,14 +1,14 @@
 package com.sparta.outsourcing.stores.service;
 
-import com.sparta.outsourcing.stores.dto.StoreCreatedRequestDto;
-import com.sparta.outsourcing.stores.dto.StoreResponseDto;
-import com.sparta.outsourcing.stores.entity.Stores;
-import com.sparta.outsourcing.stores.repository.StoresRepository;
+import com.sparta.outsourcing.domain.stores.dto.StoreCreatedRequestDto;
+import com.sparta.outsourcing.domain.stores.dto.StoreResponseDto;
+import com.sparta.outsourcing.domain.stores.entity.Stores;
+import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
+import com.sparta.outsourcing.domain.stores.service.StoresService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
