@@ -3,6 +3,7 @@ package com.sparta.outsourcing.order.service;
 import com.sparta.outsourcing.domain.menu.entity.Menu;
 import com.sparta.outsourcing.domain.menu.repository.MenuRepository;
 import com.sparta.outsourcing.order.entity.Order;
+import com.sparta.outsourcing.order.enums.OrderStatusEnum;
 import com.sparta.outsourcing.order.repository.OrderRepository;
 import com.sparta.outsourcing.stores.entity.Stores;
 import com.sparta.outsourcing.stores.repository.StoresRepository;
@@ -37,5 +38,13 @@ public class OrderService {
 
         Order order = new Order(store, menu, totalPrice);
         return orderRepository.save(order);
+    }
+
+    @Transactional
+    public void updateOrderStatus(Long orderId, OrderStatusEnum status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NullPointerException("해당 주문을 찾을 수 없습니다."));
+
+        order.updateStatus(status);
     }
 }
