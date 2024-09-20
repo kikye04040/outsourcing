@@ -1,7 +1,6 @@
 package com.sparta.outsourcing.domain.stores.entity;
 
-import com.sparta.outsourcing.domain.menu.entity.Menu;
-import com.sparta.outsourcing.domain.review.entity.Review;
+import com.sparta.outsourcing.domain.review.entity.CustomerReview;
 import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -61,8 +60,8 @@ public class Stores {
 //    private User user;
 
 
-//    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
-//    private List<Review> reviews = new ArrayList<>();
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+    private List<CustomerReview> reviews = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
 //    private List<Menu> Menu = new ArrayList<>();
