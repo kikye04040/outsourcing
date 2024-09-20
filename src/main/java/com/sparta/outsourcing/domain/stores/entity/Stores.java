@@ -1,6 +1,5 @@
 package com.sparta.outsourcing.domain.stores.entity;
 
-import com.sparta.outsourcing.domain.menu.entity.Menu;
 import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,15 +9,13 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
 public class Stores {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long storeId;
+    private Long id;
 
     private String name;
 
