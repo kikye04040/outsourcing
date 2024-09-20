@@ -1,29 +1,33 @@
 package com.sparta.outsourcing.domain.order.aspect;
 
-import com.sparta.outsourcing.domain.order.dto.OrderResponseDto;
+import com.sparta.outsourcing.domain.order.entity.Order;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Slf4j
 @Aspect
 @Component
 public class OrderLogAspect {
 
-    @Pointcut("execution(* com.sparta.outsourcing.domain.order.service.OrderService.createOrder(..))")
-    public void orderMethods() {}
+    // 주문이 생성될 때 로그 기록
+    @AfterReturning(pointcut = "execution(* com.sparta.outsourcing.domain.order.service.OrderService.createOrder(..))", returning = "result")
+    public void logCreateOrder(Object result) {
+        if (result instanceof Order) {
+            Order order = (Order) result;
+            log.info("Order Created: [OrderId: {}, StoreId: {}, Menu: {}, TotalPrice: {}]",
+                    order.getId(), order.getStore().getStoreId(), order.getMenu().getName(), order.getTotalPrice());
+        }
+    }
 
-    @AfterReturning(pointcut = "orderMethods()", returning = "result")
-    public void logOrderChanges(JoinPoint joinPoint, Object result) {
-        LocalDateTime requestTime = LocalDateTime.now();
-        if (result instanceof OrderResponseDto) {
-            OrderResponseDto responseDto = (OrderResponseDto) result;
-            log.info("Order created - Time: {}, Store ID: {}, Order ID: {}", requestTime, responseDto.getStoreId(), responseDto.getOrderId());
+    // 주문 상태가 업데이트될 때 로그 기록
+    @AfterReturning(pointcut = "execution(* com.sparta.outsourcing.domain.order.service.OrderService.updateOrderStatus(..))", returning = "result")
+    public void logUpdateOrderStatus(Object result) {
+        if (result instanceof Order) {
+            Order order = (Order) result;
+            log.info("Order Status Updated: [OrderId: {}, StoreId: {}, New Status: {}]",
+                    order.getId(), order.getStore().getStoreId(), order.getStatus());
         }
     }
 }

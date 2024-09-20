@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private OrderRepository orderRepository;
-    private StoresRepository storeRepository;
-    private MenuRepository menuRepository;
+    private final OrderRepository orderRepository;
+    private final StoresRepository storeRepository;
+    private final MenuRepository menuRepository;
 
     @Transactional
     public Order createOrder(Long storeId, String menuName, int totalPrice) {
@@ -32,7 +32,7 @@ public class OrderService {
         }
 
         // 가게 오픈/마감 시간 체크
-        if (store.isOpen()) {
+        if (!store.isOpen()) {
             throw new NullPointerException("영업 중인 가게가 아닙니다.");
         }
 
