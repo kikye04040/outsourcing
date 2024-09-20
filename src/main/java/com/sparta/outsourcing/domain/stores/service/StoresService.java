@@ -1,9 +1,8 @@
 package com.sparta.outsourcing.domain.stores.service;
 
 import com.sparta.outsourcing.domain.stores.dto.*;
-import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
-import com.sparta.outsourcing.stores.dto.*;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
+import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
 import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
 import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ public class StoresService {
 
     @PreAuthorize("hasAuthority('CEO')")
     public StoreResponseDto createStore(StoreCreatedRequestDto req) {
-        // token으로 유저 확인
+        // token으로 유저 가게가 몇개 있는지 확인(최대 3개)
 
 
         Stores newStores = new Stores(
@@ -84,6 +83,7 @@ public class StoresService {
             req.getReviewCount(),
             req.getOperationHours(),
             req.getClosedDays()
+            // 메뉴 목록 추가
         );
     }
 
@@ -129,4 +129,21 @@ public class StoresService {
         );
     }
 
+
+    @Transactional
+    public Page<StoresSimpleResponseDto> searchStores(String keyword, int page, int size){
+        Pageable pageable = PageRequest.of(page-1 , size);
+
+        Page<Stores> storesList = storesRepository.findByNameContaining(keyword, pageable);
+
+        return storesList.map(req -> new StoresSimpleResponseDto(
+            req.getName(),
+            req.getStorePictureUrl(),
+            req.getDibsCount(),
+            req.getReviewCount(),
+            req.getDeliveryTip(),
+            req.getMinDeliveryTime(),
+            req.getMaxDeliveryTime()
+        ));
+    }
 }

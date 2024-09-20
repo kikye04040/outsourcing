@@ -1,20 +1,12 @@
 package com.sparta.outsourcing.domain.user.service;
 
-import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
-import com.sparta.outsourcing.domain.user.dto.request.JoinRequest;
-import com.sparta.outsourcing.domain.user.dto.request.LoginRequest;
-import com.sparta.outsourcing.domain.user.dto.response.JoinResponse;
-import com.sparta.outsourcing.domain.user.dto.response.LoginResponse;
-import com.sparta.outsourcing.domain.user.entity.Role;
+import com.sparta.outsourcing.domain.user.dto.response.UserResponse;
 import com.sparta.outsourcing.domain.user.entity.User;
+import com.sparta.outsourcing.domain.user.exception.UserNotFoundException;
 import com.sparta.outsourcing.domain.user.repository.UserRepository;
-import com.sparta.outsourcing.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -22,53 +14,9 @@ import java.time.LocalDateTime;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
 
-    @Transactional
-    public JoinResponse join(JoinRequest joinRequest) {
-        String email = joinRequest.getEmail();
-        String password = passwordEncoder.encode(joinRequest.getPassword());
-        String name = joinRequest.getName();
-        String phone = joinRequest.getPhone();
-        String currentAddress = joinRequest.getCurrentAddress();
-        Role role = Role.ROLE_USER;
-
-        if (userRepository.existsByEmail(email)) {
-            throw new RuntimeException("중복된 사용자가 존재합니다");
-        }
-
-        User user = User.builder()
-                .email(email)
-                .password(password)
-                .name(name)
-                .phone(phone)
-                .currentAddress(currentAddress)
-                .role(role)
-                .createdDate(LocalDateTime.now())
-                .modifiedDate(LocalDateTime.now())
-                .build();
-
-        userRepository.save(user);
-
-        String token = jwtUtil.createToken(
-                CustomUserDetails.builder()
-                        .email(email)
-                        .build(), role.name());
-
-        return JoinResponse.builder().token(token).build();
+    public UserResponse findByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        return UserResponse.from(user);
     }
-
-    public LoginResponse login(LoginRequest loginRequest) {
-        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(RuntimeException::new);
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
-        }
-
-        String token = jwtUtil.createToken(CustomUserDetails.builder()
-                .email(user.getEmail())
-                .build(), user.getRole().name());
-        return LoginResponse.builder().token(token).name(user.getName()).build();
-    }
-
 }
