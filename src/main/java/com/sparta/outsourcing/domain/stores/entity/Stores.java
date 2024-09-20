@@ -19,8 +19,9 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class Stores extends Timestamped {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long storeId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String name;
 
@@ -58,7 +59,7 @@ public class Stores extends Timestamped {
     private StoreStatus storeStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
 
