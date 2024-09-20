@@ -9,5 +9,6 @@ public class JoinRequest {
     private String phone;
     private String name;
     private String currentAddress;
-
+    private String adminToken;
+    private Boolean isOwner;
 }

@@ -30,14 +30,16 @@ public class JwtFilter extends OncePerRequestFilter {
         String tokenValue = jwtUtil.getTokenFromRequest(request);
 
         if (!StringUtils.hasText(tokenValue)) {
-            setErrorResponse(response, ErrorCode.TOKEN_NOT_FOUND);
+            log.info("TOKEN_NULL");
+            filterChain.doFilter(request, response);
             return;
         }
 
         String token = jwtUtil.substringToken(tokenValue);
 
         if (!jwtUtil.validateToken(token)) {
-            setErrorResponse(response, ErrorCode.INVALID_TOKEN);
+            log.info("TOKEN_INVALID");
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -48,34 +50,39 @@ public class JwtFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
-
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String path = request.getRequestURI();
-        return path.equals("/login") || path.equals("/") || path.equals("/join") || path.startsWith("/stores") || path.startsWith("/reviews") || path.startsWith("/orders");
-    }
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//        String path = request.getRequestURI();
+//        return path.equals("/login") ||
+//                path.equals("/") ||
+//                path.equals("/join") ||
+//                path.startsWith("/stores") ||
+//                path.startsWith("/reviews") ||
+//                path.startsWith("/orders") ||
+//                path.startsWith("/users/") && !path.equals("/users/me");
+//    }
 
-    private void setErrorResponse(
-            HttpServletResponse response,
-            ErrorCode errorCode
-    ) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        response.setStatus(errorCode.getHttpStatus().value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding("UTF-8");
-        ErrorResponse errorResponse = new ErrorResponse(errorCode.getCode(), errorCode.getMessage());
-        try {
-            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Data
-    public static class ErrorResponse {
-        private final Integer code;
-        private final String message;
-    }
+//    private void setErrorResponse(
+//            HttpServletResponse response,
+//            ErrorCode errorCode
+//    ) {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        response.setStatus(errorCode.getHttpStatus().value());
+//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//        response.setCharacterEncoding("UTF-8");
+//        ErrorResponse errorResponse = new ErrorResponse(errorCode.getCode(), errorCode.getMessage());
+//        try {
+//            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Data
+//    public static class ErrorResponse {
+//        private final Integer code;
+//        private final String message;
+//    }
 }
