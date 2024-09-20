@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CustomerReviewRepository extends JpaRepository<CustomerReview, Long> {
 
-    List<CustomerReview> findByStoreIdAndRatingBetween(Long storeId, Integer minRating, Integer maxRating);
+    List<CustomerReview> findByStore_StoreIdAndRatingBetween(Long storeId, Integer minRating, Integer maxRating);
 }
