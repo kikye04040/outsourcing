@@ -61,11 +61,11 @@ public class Stores {
 //    private User user;
 
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
-    private List<Review> reviews = new ArrayList<>();
+//    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+//    private List<Review> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
-    private List<Menu> Menu = new ArrayList<>();
+//    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+//    private List<Menu> Menu = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
 //    private List<Order> Orders = new ArrayList<>();
