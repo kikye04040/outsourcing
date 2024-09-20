@@ -2,9 +2,8 @@ package com.sparta.outsourcing.domain.review.controller;
 
 import com.sparta.outsourcing.domain.review.dto.OwnerReviewRequestDto;
 import com.sparta.outsourcing.domain.review.dto.OwnerReviewResponseDto;
-import com.sparta.outsourcing.domain.review.dto.ReviewRequestDto;
-import com.sparta.outsourcing.domain.review.dto.ReviewResponseDto;
-import com.sparta.outsourcing.domain.review.entity.Review;
+import com.sparta.outsourcing.domain.review.dto.CustomerReviewRequestDto;
+import com.sparta.outsourcing.domain.review.dto.CustomerReviewResponseDto;
 import com.sparta.outsourcing.domain.review.service.ReviewService;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +21,10 @@ public class ReviewController {
 
     // 리뷰 작성
     @PostMapping("/reviews")
-    public ResponseEntity<?> addReview(@RequestBody ReviewRequestDto reviewRequestDto) {
-        ReviewResponseDto reviewResponseDto = reviewService.addReview(reviewRequestDto);
+    public ResponseEntity<?> addReview(@RequestBody CustomerReviewRequestDto customerReviewRequestDto) {
+        CustomerReviewResponseDto customerReviewResponseDto = reviewService.addReview(customerReviewRequestDto);
 
-        return ResponseEntity.ok(reviewResponseDto);
+        return ResponseEntity.ok(customerReviewResponseDto);
     }
 
 
@@ -35,7 +34,7 @@ public class ReviewController {
                                         @RequestParam(value = "minRating", defaultValue = "1") int minRating,
                                         @RequestParam(value = "maxRating", defaultValue = "5") int maxRating) {
 
-        List<ReviewResponseDto> reviews = reviewService.getReviews(storeId, minRating, maxRating);
+        List<CustomerReviewResponseDto> reviews = reviewService.getReviews(storeId, minRating, maxRating);
 
         return ResponseEntity.ok(reviews);
     }
@@ -45,11 +44,11 @@ public class ReviewController {
     @PutMapping("/stores/{storeId}/reviews")
     public ResponseEntity<?> updateReview(@RequestParam(value = "reviewId") Long reviewId,
                                           @AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                          @RequestBody ReviewRequestDto reviewRequestDto) {
+                                          @RequestBody CustomerReviewRequestDto customerReviewRequestDto) {
 
-        ReviewResponseDto reviewResponseDto = reviewService.updateReview(customUserDetails, reviewId, reviewRequestDto);
+        CustomerReviewResponseDto customerReviewResponseDto = reviewService.updateReview(customUserDetails, reviewId, customerReviewRequestDto);
 
-        return ResponseEntity.ok(reviewResponseDto);
+        return ResponseEntity.ok(customerReviewResponseDto);
     }
 
 
