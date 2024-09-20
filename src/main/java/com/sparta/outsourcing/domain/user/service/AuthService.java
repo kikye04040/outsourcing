@@ -27,6 +27,9 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    //TODO: 환경 변수에서 읽어오게 할 것
+    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+
     @Transactional
     public JoinResponse join(JoinRequest joinRequest) {
         String email = joinRequest.getEmail();
@@ -36,8 +39,17 @@ public class AuthService {
         String currentAddress = joinRequest.getCurrentAddress();
         Role role = Role.ROLE_USER;
 
+
         if (userRepository.existsByEmail(email)) {
             throw new RuntimeException("중복된 사용자가 존재합니다");
+        }
+
+        if (isValidAdminToken(joinRequest.getAdminToken())) {
+            role = Role.ROLE_ADMIN;
+        }
+
+        if (joinRequest.getIsOwner()) {
+            role = Role.ROLE_OWNER;
         }
 
         User user = User.builder()
@@ -75,4 +87,7 @@ public class AuthService {
         return LoginResponse.builder().token(token).name(user.getName()).build();
     }
 
+    public boolean isValidAdminToken(String adminToken) {
+        return adminToken != null && adminToken.equals(ADMIN_TOKEN);
+    }
 }
