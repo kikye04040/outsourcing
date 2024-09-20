@@ -1,6 +1,7 @@
 package com.sparta.outsourcing.domain.menu.controller;
 
 import com.sparta.outsourcing.domain.menu.dto.request.MenuCreateRequestDto;
+import com.sparta.outsourcing.domain.menu.dto.request.MenuDeleteRequestDto;
 import com.sparta.outsourcing.domain.menu.dto.request.MenuUpdateRequestDto;
 import com.sparta.outsourcing.domain.menu.dto.response.MenuResponseDto;
 import com.sparta.outsourcing.domain.menu.service.MenuService;
@@ -17,27 +18,28 @@ public class MenuController {
         this.menuService = menuService;
     }
 
-    // store 에 메뉴 생성
+    // 메뉴 생성
     @PostMapping("/stores/{storeId}/menus")
-    public MenuResponseDto createMenu(@PathVariable Long storeId, @RequestBody MenuCreateRequestDto menuSaveRequest) {
-        return menuService.createMenu(storeId, menuSaveRequest);
+    public MenuResponseDto createMenu(@PathVariable Long storeId, @RequestBody MenuCreateRequestDto menuSaveRequestDto) {
+        return menuService.createMenu(storeId, menuSaveRequestDto);
     }
 
-    // store의 메뉴 조회
+    // 메뉴 조회
     @GetMapping("/stores/{storeId}/menus")
     public List<MenuResponseDto> getMenus(@PathVariable Long storeId) {
         return menuService.getMenus(storeId);
     }
 
-    // store 의 menu 수정
+    // 메뉴 수정
     @PutMapping("/stores/menus/{menuId}")
-    public MenuResponseDto updateManu(@PathVariable Long storeId, Long menuId, @RequestBody MenuUpdateRequestDto menuUpdateRequest) {
-        return menuService.updateMenu(menuId, menuUpdateRequest);
+    public MenuResponseDto updateManu(@PathVariable Long menuId, @RequestBody MenuUpdateRequestDto menuUpdateRequestDto) {
+        return menuService.updateMenu(menuId, menuUpdateRequestDto);
     }
 
-//    @PutMapping("/stores/menus/{menuId}")
-//    public void deleteMenu(@PathVariable Long menuId @RequestBody MenuDeleteRequest menuDeleterequest) {
-//        menuService.deleteMenu(menuId, menuDeleterequest);
-//    }
+    // 메뉴 삭제 상태로 변경
+    @PutMapping("/stores/menus/{menuId}/delete")
+    public void deleteMenu(@PathVariable Long menuId, @RequestBody MenuDeleteRequestDto menuDeleterequestDto) {
+        menuService.deleteMenu(menuId, menuDeleterequestDto);
+    }
 
 }
