@@ -2,7 +2,6 @@ package com.sparta.outsourcing.domain.stores.controller;
 
 import com.sparta.outsourcing.domain.stores.dto.*;
 import com.sparta.outsourcing.domain.stores.service.StoresService;
-import com.sparta.outsourcing.stores.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

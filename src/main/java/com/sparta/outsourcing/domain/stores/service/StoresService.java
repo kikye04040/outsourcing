@@ -1,9 +1,8 @@
 package com.sparta.outsourcing.domain.stores.service;
 
 import com.sparta.outsourcing.domain.stores.dto.*;
-import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
-import com.sparta.outsourcing.stores.dto.*;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
+import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
 import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
 import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.RequiredArgsConstructor;
