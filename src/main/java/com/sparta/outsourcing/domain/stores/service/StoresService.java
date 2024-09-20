@@ -4,6 +4,10 @@ import com.sparta.outsourcing.domain.stores.dto.*;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
 import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
+import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
+import com.sparta.outsourcing.domain.user.entity.Status;
+import com.sparta.outsourcing.domain.user.entity.User;
+import com.sparta.outsourcing.domain.user.repository.UserRepository;
 import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,10 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class StoresService {
     private final StoresRepository storesRepository;
+    private final UserRepository userRepository;
 
     @PreAuthorize("hasAuthority('CEO')")
-    public StoreResponseDto createStore(StoreCreatedRequestDto req) {
+    public StoreResponseDto createStore(StoreCreatedRequestDto req, CustomUserDetails userDetails) {
         // token으로 유저 가게가 몇개 있는지 확인(최대 3개)
+        User user = userRepository.findByEmailAndStatus(userDetails.getEmail(), Status.NORMAL)
+            .orElseThrow(() -> new IllegalArgumentException("유저가 활성화상태가 아닙니다."));
 
 
         Stores newStores = new Stores(
