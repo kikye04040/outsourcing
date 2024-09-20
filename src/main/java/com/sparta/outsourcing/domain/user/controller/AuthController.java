@@ -4,7 +4,7 @@ import com.sparta.outsourcing.domain.user.dto.request.JoinRequest;
 import com.sparta.outsourcing.domain.user.dto.request.LoginRequest;
 import com.sparta.outsourcing.domain.user.dto.response.JoinResponse;
 import com.sparta.outsourcing.domain.user.dto.response.LoginResponse;
-import com.sparta.outsourcing.domain.user.service.UserService;
+import com.sparta.outsourcing.domain.user.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,17 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
-    private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping("/join")
     public ResponseEntity<JoinResponse> joinUser(@RequestBody JoinRequest joinRequest) {
-        JoinResponse joinResponse = userService.join(joinRequest);
+        JoinResponse joinResponse = authService.join(joinRequest);
         return ResponseEntity.ok(joinResponse);
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        LoginResponse loginResponse = userService.login(loginRequest);
+        LoginResponse loginResponse = authService.login(loginRequest);
         return ResponseEntity.ok(loginResponse);
     }
 }
