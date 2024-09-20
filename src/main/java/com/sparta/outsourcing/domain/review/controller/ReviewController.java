@@ -53,7 +53,7 @@ public class ReviewController {
 
 
     // 작성한 리뷰 삭제
-    @PutMapping("/stores/{storeId}/reviews")
+    @PutMapping("/stores/{storeId}/review")
     public ResponseEntity<?> deleteReview(@PathVariable Long storeId,
                                           @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
@@ -85,7 +85,7 @@ public class ReviewController {
 
 
     // 사장 리뷰 삭제
-    @PutMapping("/stores/{storeId}/reviews/{reviewId}")
+    @PutMapping("/stores/{storeId}/review/{reviewId}")
     public ResponseEntity<?> deleteSubReview(@PathVariable(name = "reviewId") Long reviewId,
                                              @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 

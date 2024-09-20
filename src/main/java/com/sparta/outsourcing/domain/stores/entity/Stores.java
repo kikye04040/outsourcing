@@ -75,7 +75,7 @@ public class Stores extends Timestamped {
 //    private List<Carts> Carts = new ArrayList<>();
 
     public Stores(String name, int type, String category, String address, String phone, String contents, String storePictureUrl, int deliveryTip,
-                  String operationHours, String closedDays, User user) {
+                  String operationHours, String closedDays) {
         this.name = name;
         this.type = type;
         this.category = category;

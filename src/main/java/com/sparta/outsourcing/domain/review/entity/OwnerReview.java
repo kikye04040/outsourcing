@@ -41,8 +41,8 @@ public class OwnerReview extends Timestamped {
     private User user;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "reviewId", nullable = false)
-    private CustomerReview CustomerReview;
+    @JoinColumn(name = "customer_review_id", nullable = false)
+    private CustomerReview customerReview;
 
 
     public OwnerReview(OwnerReviewRequestDto ownerReviewRequestDto) {
