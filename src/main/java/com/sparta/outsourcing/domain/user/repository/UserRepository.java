@@ -1,5 +1,6 @@
 package com.sparta.outsourcing.domain.user.repository;
 
+import com.sparta.outsourcing.domain.user.entity.Status;
 import com.sparta.outsourcing.domain.user.entity.User;
 import com.sparta.outsourcing.domain.user.exception.UserNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     default User findByIdOrElseThrow(Long userId) {
         return findById(userId).orElseThrow(UserNotFoundException::new);
     }
+
+    Optional<User> findByEmailAndStatus(String email, Status Status);
+
 }
