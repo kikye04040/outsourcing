@@ -5,6 +5,7 @@ import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.user.entity.User;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -14,8 +15,8 @@ public class CustomerReviewRequestDto {
     private Long orderId;
     private int rating;
     private String contents;
+    private MultipartFile reviewPicture;
     private String reviewPictureUrl;
-    private String status = "existed";
 
     private User user;
     private Stores store;
