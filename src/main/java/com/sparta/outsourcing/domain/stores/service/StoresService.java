@@ -23,11 +23,10 @@ public class StoresService {
     private final StoresRepository storesRepository;
     private final UserRepository userRepository;
 
-    @PreAuthorize("hasAuthority('CEO')")
+    //@PreAuthorize("hasAuthority('CEO')")
     public StoreResponseDto createStore(StoreCreatedRequestDto req, CustomUserDetails userDetails) {
         // 유저 상태 확인(NORMAL)
-        User user = userRepository.findByEmailAndStatus(userDetails.getEmail(), Status.NORMAL)
-            .orElseThrow(() -> new IllegalArgumentException("유저가 활성화상태가 아닙니다."));
+        User user = userRepository.findByEmailOrElseThrow(userDetails.getEmail());
 
         // 해당 유저의 가게가 몇개 있는지 확인(최대 3개)
         if(storesRepository.countByUserId(user.getId()) > 4){

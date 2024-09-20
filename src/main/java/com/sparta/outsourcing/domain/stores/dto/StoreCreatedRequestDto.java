@@ -1,5 +1,6 @@
 package com.sparta.outsourcing.domain.stores.dto;
 
+import com.sparta.outsourcing.domain.user.entity.User;
 import lombok.Getter;
 
 @Getter
@@ -15,9 +16,10 @@ public class StoreCreatedRequestDto {
     private int deliveryTip;
     private String operationHours;
     private String closedDays;
+    private User user;
 
     public StoreCreatedRequestDto(String name, int type, String category, String address, String phone, String contents, String storePictureUrl, int deliveryTip,
-                                  String operationHours, String closedDays) {
+                                  String operationHours, String closedDays, User user) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -28,5 +30,6 @@ public class StoreCreatedRequestDto {
         this.deliveryTip = deliveryTip;
         this.operationHours = operationHours;
         this.closedDays = closedDays;
+        this.user = user;
     }
 }
