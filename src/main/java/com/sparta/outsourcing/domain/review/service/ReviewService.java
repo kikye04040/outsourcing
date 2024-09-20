@@ -1,9 +1,12 @@
 package com.sparta.outsourcing.domain.review.service;
 
+import com.sparta.outsourcing.domain.review.dto.OwnerReviewRequestDto;
+import com.sparta.outsourcing.domain.review.dto.OwnerReviewResponseDto;
 import com.sparta.outsourcing.domain.review.entity.Review;
 import com.sparta.outsourcing.domain.review.repository.ReviewRepository;
-import com.sparta.outsourcing.domain.review.reviewDTO.ReviewRequestDto;
-import com.sparta.outsourcing.domain.review.reviewDTO.ReviewResponseDto;
+import com.sparta.outsourcing.domain.review.dto.ReviewRequestDto;
+import com.sparta.outsourcing.domain.review.dto.ReviewResponseDto;
+import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,11 +39,11 @@ public class ReviewService {
 
 
     // 리뷰 수정
-    public ReviewResponseDto updateReview(Long userId, Long reviewId, ReviewRequestDto reviewRequestDto) {
+    public ReviewResponseDto updateReview(CustomUserDetails customUserDetails, Long reviewId, ReviewRequestDto reviewRequestDto) {
 
         Review review = reviewRepository.findById(reviewId).orElseThrow();
 
-        if(userId != review.getUser().getId()) {
+        if(customUserDetails.getEmail() != review.getUser().getEmail()) {
             // 예외처리 진행해야함
             return null;
         }
@@ -52,10 +55,10 @@ public class ReviewService {
 
 
     // 리뷰 삭제
-    public String deleteReview(Long userId, Long reviewId) {
+    public String deleteReview(CustomUserDetails customUserDetails, Long reviewId) {
         Review review = reviewRepository.findById(reviewId).orElseThrow();
 
-        if(userId != review.getUser().getId()) {
+        if(customUserDetails.getEmail() != review.getUser().getEmail()) {
             // 예외처리 진행해야함
             return null;
         }
@@ -63,5 +66,47 @@ public class ReviewService {
         reviewRepository.delete(review);
 
         return "Review deleted";
+    }
+
+
+    // 사장 리뷰 작성
+    public OwnerReviewResponseDto addSubReview(Long reviewId, OwnerReviewRequestDto ownerReviewRequestDto) {
+
+        Review customerReview = reviewRepository.findById(reviewId).orElseThrow();
+
+        Review review = new Review(ownerReviewRequestDto);
+        Review saved = reviewRepository.save(review);
+
+        return new OwnerReviewResponseDto(saved);
+    }
+
+    // 사장 리뷰 수정
+    public OwnerReviewResponseDto updateSubReview(CustomUserDetails customUserDetails, Long reviewId, OwnerReviewRequestDto ownerReviewRequestDto) {
+
+        Review review = reviewRepository.findById(reviewId).orElseThrow();
+
+        if(customUserDetails.getEmail() != review.getUser().getEmail()) {
+            // 예외처리 진행해야함
+            return null;
+        }
+
+        review.update(ownerReviewRequestDto);
+
+        return new OwnerReviewResponseDto(review);
+    }
+
+    public String deleteSubReview(CustomUserDetails customUserDetails, Long reviewId) {
+
+        Review review = reviewRepository.findById(reviewId).orElseThrow();
+
+        if(customUserDetails.getEmail() != review.getUser().getEmail()) {
+            // 예외처리 진행해야함
+            return null;
+        }
+
+        reviewRepository.delete(review);
+
+        return "Review deleted";
+
     }
 }

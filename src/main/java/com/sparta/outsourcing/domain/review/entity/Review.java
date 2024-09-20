@@ -1,6 +1,10 @@
 package com.sparta.outsourcing.domain.review.entity;
 
-import com.sparta.outsourcing.domain.review.reviewDTO.ReviewRequestDto;
+import com.sparta.outsourcing.domain.order.entity.Order;
+import com.sparta.outsourcing.domain.review.dto.OwnerReviewRequestDto;
+import com.sparta.outsourcing.domain.review.dto.ReviewRequestDto;
+import com.sparta.outsourcing.domain.stores.entity.Stores;
+import com.sparta.outsourcing.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,7 +52,7 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "storeId", nullable = false)
-    private Store store;
+    private Stores store;
 
 
     public Review(ReviewRequestDto reviewRequestDto) {
@@ -59,10 +63,23 @@ public class Review {
         this.store = reviewRequestDto.getStore();
     }
 
+    public Review(OwnerReviewRequestDto ownerReviewRequestDto) {
+        this.rating = ownerReviewRequestDto.getRating();
+        this.contents = ownerReviewRequestDto.getContents();
+        this.order = ownerReviewRequestDto.getOrder();
+        this.user = ownerReviewRequestDto.getUser();
+        this.store = ownerReviewRequestDto.getStore();
+    }
+
     public void update(ReviewRequestDto reviewRequestDto) {
         this.rating = reviewRequestDto.getRating();
         this.contents = reviewRequestDto.getContents();
         this.reviewPictureUrl = reviewRequestDto.getReviewPictureUrl();
     }
 
+    public void update(OwnerReviewRequestDto ownerReviewRequestDto) {
+        this.rating = ownerReviewRequestDto.getRating();
+        this.contents = ownerReviewRequestDto.getContents();
+        this.reviewPictureUrl = ownerReviewRequestDto.getReviewPictureUrl();
+    }
 }
