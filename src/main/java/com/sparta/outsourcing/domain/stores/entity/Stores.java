@@ -1,4 +1,4 @@
-package com.sparta.outsourcing.stores.entity;
+package com.sparta.outsourcing.domain.stores.entity;
 
 import com.sparta.outsourcing.domain.menu.entity.Menu;
 import com.sparta.outsourcing.domain.review.entity.Review;
