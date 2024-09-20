@@ -25,9 +25,14 @@ public class StoresService {
 
     @PreAuthorize("hasAuthority('CEO')")
     public StoreResponseDto createStore(StoreCreatedRequestDto req, CustomUserDetails userDetails) {
-        // token으로 유저 가게가 몇개 있는지 확인(최대 3개)
+        // 유저 상태 확인(NORMAL)
         User user = userRepository.findByEmailAndStatus(userDetails.getEmail(), Status.NORMAL)
             .orElseThrow(() -> new IllegalArgumentException("유저가 활성화상태가 아닙니다."));
+
+        // 해당 유저의 가게가 몇개 있는지 확인(최대 3개)
+        if(storesRepository.countByUserId(user.getId()) > 4){
+            throw new IllegalArgumentException("가게 생성은 최대 3개까지만 가능합니다.");
+        };
 
 
         Stores newStores = new Stores(
@@ -40,7 +45,8 @@ public class StoresService {
             req.getStorePictureUrl(),
             req.getDeliveryTip(),
             req.getOperationHours(),
-            req.getClosedDays()
+            req.getClosedDays(),
+            user
         );
 
         Stores savedStores = storesRepository.save(newStores);
