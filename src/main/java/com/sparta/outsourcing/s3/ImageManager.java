@@ -1,22 +1,36 @@
 package com.sparta.outsourcing.s3;
 
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
-import com.sparta.outsourcing.jwt.ErrorCode;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Slf4j
+@RequiredArgsConstructor
+@Component
 public class ImageManager {
+
+    private final AmazonS3 amazonS3;
+
+    @Value("${cloud.aws.s3.bucketName}")
+    private String bucketName;
+
     public String upload(MultipartFile image) {
         if(image.isEmpty() || Objects.isNull(image.getOriginalFilename())) {
             throw new AmazonS3Exception("not found image");
@@ -75,12 +89,31 @@ public class ImageManager {
             //실제로 S3에 이미지 데이터를 넣는 부분이다.
             amazonS3.putObject(putObjectRequest); // put image to S3
         }catch (Exception e){
-            throw new S3Exception(ErrorCode.PUT_OBJECT_EXCEPTION);
+            throw new AmazonS3Exception("");
         }finally {
             byteArrayInputStream.close();
             is.close();
         }
 
         return amazonS3.getUrl(bucketName, s3FileName).toString();
+    }
+
+    public void deleteImagFromS3(String imageAddress) {
+        String key = getKeyFromImageAddress(imageAddress);
+        try {
+            amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
+        } catch (Exception e) {
+            throw new AmazonS3Exception("could not delete image from s3", e);
+        }
+    }
+
+    public String getKeyFromImageAddress(String imageAddress) {
+        try {
+            URL url = new URL(imageAddress);
+            String decodingKey = URLDecoder.decode(url.getPath(), "UTF-8");
+            return decodingKey.substring(1);
+        } catch (MalformedURLException | UnsupportedEncodingException e) {
+            throw new AmazonS3Exception("");
+        }
     }
 }

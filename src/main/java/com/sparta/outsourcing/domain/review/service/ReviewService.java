@@ -37,7 +37,7 @@ public class ReviewService {
     // 리뷰 조회
     public List<CustomerReviewResponseDto> getReviews(Long storeId, int minRating, int maxRating) {
 
-        return customerReviewRepository.findByStore_StoreIdAndRatingBetween(storeId, minRating, maxRating).stream()
+        return customerReviewRepository.findByStoreIdAndRatingBetween(storeId, minRating, maxRating).stream()
                 .map(CustomerReviewResponseDto::new).toList();
     }
 
