@@ -1,7 +1,9 @@
 package com.sparta.outsourcing.domain.stores.entity;
 
 import com.sparta.outsourcing.domain.review.entity.CustomerReview;
+import com.sparta.outsourcing.domain.review.entity.Timestamped;
 import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
+import com.sparta.outsourcing.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +18,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Stores {
+public class Stores extends Timestamped {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long storeId;
 
@@ -55,9 +57,9 @@ public class Stores {
     @Enumerated(EnumType.STRING)
     private StoreStatus storeStatus;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "userId", nullable = false)
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", nullable = false)
+    private User user;
 
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
@@ -73,7 +75,7 @@ public class Stores {
 //    private List<Carts> Carts = new ArrayList<>();
 
     public Stores(String name, int type, String category, String address, String phone, String contents, String storePictureUrl, int deliveryTip,
-                  String operationHours, String closedDays) {
+                  String operationHours, String closedDays, User user) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -85,6 +87,7 @@ public class Stores {
         this.operationHours = operationHours;
         this.closedDays = closedDays;
         this.storeStatus = StoreStatus.Running;
+        this.user = user;
     }
 
 
