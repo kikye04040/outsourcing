@@ -15,6 +15,6 @@ public class OrderResponseDto {
         this.orderId = order.getId();
         this.status = order.getStatus();
         this.totalPrice = order.getTotalPrice();
-        this.log = new LogResponseDto(order.getId(), order.getStore().getStoreId());
+        this.log = new LogResponseDto(order.getId(), order.getStore().getId());
     }
 }

@@ -21,6 +21,7 @@ public class CustomerReviewResponseDto {
         this.contents = customerReview.getContents();
         this.rating = customerReview.getRating();
         this.userId = customerReview.getUser().getId();
+        this.storeId = customerReview.getStore().getId();
 
     }
 }
