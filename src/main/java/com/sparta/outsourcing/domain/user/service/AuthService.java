@@ -48,7 +48,7 @@ public class AuthService {
             role = Role.ROLE_ADMIN;
         }
 
-        if (joinRequest.getIsOwner()) {
+        if (joinRequest.getIsOwner()!= null && joinRequest.getIsOwner()) {
             role = Role.ROLE_OWNER;
         }
 
