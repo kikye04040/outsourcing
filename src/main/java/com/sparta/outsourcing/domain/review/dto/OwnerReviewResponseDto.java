@@ -1,27 +1,28 @@
 package com.sparta.outsourcing.domain.review.dto;
 
-import com.sparta.outsourcing.domain.review.entity.Review;
+import com.sparta.outsourcing.domain.review.entity.CustomerReview;
+import com.sparta.outsourcing.domain.review.entity.OwnerReview;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 public class OwnerReviewResponseDto {
 
     private Long id;
-    private Long orderId;
+    private Long customerReviewId;
     private String contents;
-    private int rating;
-    private Long userId;
-    private Long storeId;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
 
-    public OwnerReviewResponseDto(Review review) {
-        this.id = review.getId();
-        this.orderId = review.getOrder().getId();
-        this.contents = review.getContents();
-        this.rating = review.getRating();
-        this.userId = review.getUser().getId();
-        this.storeId = review.getStore().getStoreId();
+    public OwnerReviewResponseDto(OwnerReview ownerReview) {
+        this.id = ownerReview.getId();
+        this.customerReviewId = ownerReview.getCustomerReview().getId();
+        this.contents = ownerReview.getContents();
+        this.createdAt = ownerReview.getCreatedAt();
+        this.modifiedAt = ownerReview.getModifiedAt();
 
     }
 }

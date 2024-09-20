@@ -2,10 +2,12 @@ package com.sparta.outsourcing.domain.review.service;
 
 import com.sparta.outsourcing.domain.review.dto.OwnerReviewRequestDto;
 import com.sparta.outsourcing.domain.review.dto.OwnerReviewResponseDto;
-import com.sparta.outsourcing.domain.review.entity.Review;
-import com.sparta.outsourcing.domain.review.repository.ReviewRepository;
-import com.sparta.outsourcing.domain.review.dto.ReviewRequestDto;
-import com.sparta.outsourcing.domain.review.dto.ReviewResponseDto;
+import com.sparta.outsourcing.domain.review.entity.CustomerReview;
+import com.sparta.outsourcing.domain.review.entity.OwnerReview;
+import com.sparta.outsourcing.domain.review.repository.CustomerReviewRepository;
+import com.sparta.outsourcing.domain.review.dto.CustomerReviewRequestDto;
+import com.sparta.outsourcing.domain.review.dto.CustomerReviewResponseDto;
+import com.sparta.outsourcing.domain.review.repository.OwnerReviewRepository;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import org.springframework.stereotype.Service;
 
@@ -14,68 +16,73 @@ import java.util.List;
 @Service
 public class ReviewService {
 
-    private final ReviewRepository reviewRepository;
+    private final CustomerReviewRepository customerReviewRepository;
+    private final OwnerReviewRepository ownerReviewRepository;
 
-    public ReviewService(ReviewRepository reviewRepository) {
-        this.reviewRepository = reviewRepository;
+    public ReviewService(CustomerReviewRepository customerReviewRepository, OwnerReviewRepository ownerReviewRepository) {
+        this.customerReviewRepository = customerReviewRepository;
+        this.ownerReviewRepository = ownerReviewRepository;
     }
 
 
     // 리뷰 작성
-    public ReviewResponseDto addReview(ReviewRequestDto reviewRequestDto) {
-        Review review = new Review(reviewRequestDto);
-        Review saved = reviewRepository.save(review);
+    public CustomerReviewResponseDto addReview(CustomerReviewRequestDto customerReviewRequestDto) {
+        CustomerReview customerReview = new CustomerReview(customerReviewRequestDto);
+        CustomerReview saved = customerReviewRepository.save(customerReview);
 
-        return new ReviewResponseDto(saved);
+        return new CustomerReviewResponseDto(saved);
     }
 
 
     // 리뷰 조회
-    public List<ReviewResponseDto> getReviews(Long storeId, int minRating, int maxRating) {
+    public List<CustomerReviewResponseDto> getReviews(Long storeId, int minRating, int maxRating) {
 
-        return reviewRepository.findByStoreIdAndRatingBetween(storeId, minRating, maxRating).stream()
-                .map(ReviewResponseDto::new).toList();
+        return customerReviewRepository.findByStoreIdAndRatingBetween(storeId, minRating, maxRating).stream()
+                .map(CustomerReviewResponseDto::new).toList();
     }
 
 
     // 리뷰 수정
-    public ReviewResponseDto updateReview(CustomUserDetails customUserDetails, Long reviewId, ReviewRequestDto reviewRequestDto) {
+    public CustomerReviewResponseDto updateReview(CustomUserDetails customUserDetails, Long reviewId, CustomerReviewRequestDto customerReviewRequestDto) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow();
+        CustomerReview customerReview = customerReviewRepository.findById(reviewId).orElseThrow();
 
-        if(customUserDetails.getEmail() != review.getUser().getEmail()) {
+        if(customUserDetails.getEmail() != customerReview.getUser().getEmail()) {
             // 예외처리 진행해야함
             return null;
         }
 
-        review.update(reviewRequestDto);
+        customerReview.update(customerReviewRequestDto);
 
-        return new ReviewResponseDto(review);
+        return new CustomerReviewResponseDto(customerReview);
     }
 
 
     // 리뷰 삭제
     public String deleteReview(CustomUserDetails customUserDetails, Long reviewId) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow();
+        CustomerReview customerReview = customerReviewRepository.findById(reviewId).orElseThrow();
 
-        if(customUserDetails.getEmail() != review.getUser().getEmail()) {
+        if(customUserDetails.getEmail() != customerReview.getUser().getEmail()) {
             // 예외처리 진행해야함
             return null;
         }
 
-        reviewRepository.delete(review);
+        customerReview.softDelete();
 
         return "Review deleted";
     }
 
 
+    /*----------------------------------------------------------------------------------------------------------------*/
+
     // 사장 리뷰 작성
     public OwnerReviewResponseDto addSubReview(Long reviewId, OwnerReviewRequestDto ownerReviewRequestDto) {
 
-        Review customerReview = reviewRepository.findById(reviewId).orElseThrow();
+        CustomerReview customerReview = customerReviewRepository.findById(reviewId).orElseThrow();
 
-        Review review = new Review(ownerReviewRequestDto);
-        Review saved = reviewRepository.save(review);
+        ownerReviewRequestDto.setCustomerReview(customerReview);
+        OwnerReview ownerReview =  new OwnerReview(ownerReviewRequestDto);
+        OwnerReview saved = ownerReviewRepository.save(ownerReview);
 
         return new OwnerReviewResponseDto(saved);
     }
@@ -83,28 +90,30 @@ public class ReviewService {
     // 사장 리뷰 수정
     public OwnerReviewResponseDto updateSubReview(CustomUserDetails customUserDetails, Long reviewId, OwnerReviewRequestDto ownerReviewRequestDto) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow();
+        CustomerReview customerReview = customerReviewRepository.findById(reviewId).orElseThrow();
 
-        if(customUserDetails.getEmail() != review.getUser().getEmail()) {
+        if(customUserDetails.getEmail() != customerReview.getUser().getEmail()) {
             // 예외처리 진행해야함
             return null;
         }
 
-        review.update(ownerReviewRequestDto);
+        OwnerReview ownerReview = customerReview.getOwnerReview();
 
-        return new OwnerReviewResponseDto(review);
+        ownerReview.update(ownerReviewRequestDto);
+
+        return new OwnerReviewResponseDto(ownerReview);
     }
 
     public String deleteSubReview(CustomUserDetails customUserDetails, Long reviewId) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow();
+        OwnerReview ownerReview = ownerReviewRepository.findById(reviewId).orElseThrow();
 
-        if(customUserDetails.getEmail() != review.getUser().getEmail()) {
+        if(customUserDetails.getEmail() != ownerReview.getUser().getEmail()) {
             // 예외처리 진행해야함
             return null;
         }
 
-        reviewRepository.delete(review);
+        ownerReview.softDelete();
 
         return "Review deleted";
 
