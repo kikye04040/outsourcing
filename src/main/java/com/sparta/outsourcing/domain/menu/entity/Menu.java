@@ -1,5 +1,6 @@
 package com.sparta.outsourcing.domain.menu.entity;
 
+import com.sparta.outsourcing.domain.menu.dto.request.MenuCreateRequestDto;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
 import jakarta.persistence.*;
 import lombok.Getter;

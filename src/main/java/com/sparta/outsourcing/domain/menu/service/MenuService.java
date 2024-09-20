@@ -1,13 +1,14 @@
 package com.sparta.outsourcing.domain.menu.service;
 
-import com.sparta.outsourcing.domain.menu.dto.request.MenuDeleteRequest;
-import com.sparta.outsourcing.domain.menu.dto.request.MenuSaveRequest;
-import com.sparta.outsourcing.domain.menu.dto.request.MenuUpdateRequest;
-import com.sparta.outsourcing.domain.menu.dto.response.MenuResponse;
+import com.sparta.outsourcing.domain.menu.dto.request.MenuDeleteRequestDto;
+import com.sparta.outsourcing.domain.menu.dto.request.MenuCreateRequestDto;
+import com.sparta.outsourcing.domain.menu.dto.request.MenuUpdateRequestDto;
+import com.sparta.outsourcing.domain.menu.dto.response.MenuResponseDto;
 import com.sparta.outsourcing.domain.menu.entity.Menu;
 import com.sparta.outsourcing.domain.menu.repository.MenuRepository;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
+import jakarta.persistence.Convert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,23 +25,26 @@ public class MenuService {
 
 
     // 메뉴 생성
-    public MenuResponse createMenu(Long storeId, MenuSaveRequest menuSaveRequest) {
+    @Transactional
+    public MenuResponseDto createMenu(Long storeId, MenuCreateRequestDto menuCreateRequest) {
 
+        // 가게 존재 확인
         Stores store = storesRepository.findById(storeId)
                 .orElseThrow(() -> new NullPointerException("store not found"));
 
         // 사용자가 가게의 주인인지 확인하는 부분 추가할 것
 
+
         Menu menu = new Menu(
-                menuSaveRequest.getName(),
-                menuSaveRequest.getDescription(),
-                menuSaveRequest.getPrice(),
+                menuCreateRequest.getName(),
+                menuCreateRequest.getDescription(),
+                menuCreateRequest.getPrice(),
                 store
         );
 
         Menu savedMenu = menuRepository.save(menu);
 
-        return new MenuResponse(
+        return new MenuResponseDto(
                 savedMenu.getName(),
                 savedMenu.getDescription(),
                 savedMenu.getPrice()
@@ -49,17 +53,16 @@ public class MenuService {
     }
 
     // 메뉴 조회
-    public List<MenuResponse> getMenus(Long storeId) {
+    public List<MenuResponseDto> getMenus(Long storeId) {
 
         // 가게 id가 같은 메뉴
         List<Menu> menuList = menuRepository.findByStoreId(storeId);
 
-        List<MenuResponse> menuResponseList = new ArrayList<>();
+        List<MenuResponseDto> menuResponseList = new ArrayList<>();
 
         for (Menu menu : menuList) {
 
-            // deleted 가 true 일 경우 조회되지 않도록 하는 부분은 repository 쿼리 부분에
-            MenuResponse menuResponse = new MenuResponse(
+            MenuResponseDto menuResponse = new MenuResponseDto(
                     menu.getName(),
                     menu.getDescription(),
                     menu.getPrice()
@@ -73,17 +76,20 @@ public class MenuService {
 
     // 메뉴 수정
     @Transactional
-    public MenuResponse updateMenu(Long menuId, MenuUpdateRequest menuUpdateRequest) {
+    public MenuResponseDto updateMenu(Long menuId, MenuUpdateRequestDto menuUpdateRequest) {
+
+        // 가게 존재 확인
+        Stores store = storesRepository.findById(menuUpdateRequest.getStores().getId())
+                .orElseThrow(() -> new NullPointerException("store not found"));
+
+        // 사용자가 가게의 주인인지 확인
 
         // 메뉴 존재 확인
         Menu menu = findMenuById(menuId);
 
-        // 사용자가 가게의 주인인지 확인 하는 부분
-
-
         menu.updateMenu(menuUpdateRequest.getName(), menuUpdateRequest.getDescription(), menuUpdateRequest.getPrice());
 
-        return new MenuResponse(
+        return new MenuResponseDto(
                 menu.getName(),
                 menu.getDescription(),
                 menu.getPrice()
@@ -93,13 +99,16 @@ public class MenuService {
 
     // 메뉴 삭제
     @Transactional
-    public void deleteMenu(Long menuId, MenuDeleteRequest menuDeleteRequest) {
+    public void deleteMenu(Long menuId, MenuDeleteRequestDto menuDeleteRequest) {
 
+        // 가게 존재 확인
+        Stores store = storesRepository.findById(menuDeleteRequest.getStores().getId())
+                .orElseThrow(() -> new NullPointerException("store not found"));
+
+        // 사용자가 가게의 주인인지 확인
+
+        // 메뉴 존재 확인
         Menu menu = findMenuById(menuId);
-
-        // menuDeleteRequest 로 확인 필요
-
-        // 사용자가 존재하는지 확인하는 부분
 
         menu.deleteMenu();
 
