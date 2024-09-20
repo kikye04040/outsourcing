@@ -18,10 +18,18 @@ public class StoresController {
         return storesService.createStore(storeCreatedRequestDto);
     }
 
+    // 전체 조회
     @GetMapping("/stores")
     public ResponseEntity<Page<StoresSimpleResponseDto>> getStores(@RequestParam(defaultValue = "1") int page,
                                                                    @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(storesService.getStores(page, size));
+    }
+
+    // 가게명 검색
+    @PostMapping("/stores/{keyword}")
+    public ResponseEntity<Page<StoresSimpleResponseDto>> searchStores(@PathVariable String keyword, @RequestParam(defaultValue = "1") int page,
+                                                                        @RequestParam(defaultValue = "10") int size){
+        return ResponseEntity.ok(storesService.searchStores(keyword, page, size));
     }
 
     @GetMapping("/stores/{storeId}")
