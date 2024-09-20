@@ -17,7 +17,7 @@ public class OrderLogAspect {
         if (result instanceof Order) {
             Order order = (Order) result;
             log.info("Order Created: [OrderId: {}, StoreId: {}, Menu: {}, TotalPrice: {}]",
-                    order.getId(), order.getStore().getStoreId(), order.getMenu().getName(), order.getTotalPrice());
+                    order.getId(), order.getStore().getId(), order.getMenu().getName(), order.getTotalPrice());
         }
     }
 
@@ -27,7 +27,7 @@ public class OrderLogAspect {
         if (result instanceof Order) {
             Order order = (Order) result;
             log.info("Order Status Updated: [OrderId: {}, StoreId: {}, New Status: {}]",
-                    order.getId(), order.getStore().getStoreId(), order.getStatus());
+                    order.getId(), order.getStore().getId(), order.getStatus());
         }
     }
 }
