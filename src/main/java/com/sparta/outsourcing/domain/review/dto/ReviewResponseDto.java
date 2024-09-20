@@ -1,4 +1,4 @@
-package com.sparta.outsourcing.domain.review.reviewDTO;
+package com.sparta.outsourcing.domain.review.dto;
 
 import com.sparta.outsourcing.domain.review.entity.Review;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class ReviewResponseDto {
         this.contents = review.getContents();
         this.rating = review.getRating();
         this.userId = review.getUser().getId();
-        this.storeId = review.getStore().getId();
+        this.storeId = review.getStore().getStoreId();
 
     }
 }
