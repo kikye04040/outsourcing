@@ -31,15 +31,15 @@ public class MenuController {
     }
 
     // 메뉴 수정
-    @PutMapping("/stores/menus/{menuId}")
-    public MenuResponseDto updateManu(@PathVariable Long menuId, @RequestBody MenuUpdateRequestDto menuUpdateRequestDto) {
-        return menuService.updateMenu(menuId, menuUpdateRequestDto);
+    @PutMapping("/stores/{storeId}/menus/{menuId}")
+    public MenuResponseDto updateManu(@PathVariable Long storeId, @PathVariable Long menuId, @RequestBody MenuUpdateRequestDto menuUpdateRequestDto) {
+        return menuService.updateMenu(storeId, menuId, menuUpdateRequestDto);
     }
 
     // 메뉴 삭제 상태로 변경
-    @PutMapping("/stores/menus/{menuId}/delete")
-    public void deleteMenu(@PathVariable Long menuId, @RequestBody MenuDeleteRequestDto menuDeleterequestDto) {
-        menuService.deleteMenu(menuId, menuDeleterequestDto);
+    @PutMapping("/stores/{storeId}/menus/{menuId}/delete")
+    public void deleteMenu(@PathVariable Long storeId, @PathVariable Long menuId, @RequestBody MenuDeleteRequestDto menuDeleterequestDto) {
+        menuService.deleteMenu(storeId, menuId, menuDeleterequestDto);
     }
 
 }
