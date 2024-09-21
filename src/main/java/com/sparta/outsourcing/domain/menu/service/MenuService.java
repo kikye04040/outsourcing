@@ -31,8 +31,7 @@ public class MenuService {
     public MenuResponseDto createMenu(Long storeId, MenuCreateRequestDto menuCreateRequest) {
 
         // 가게 존재 확인
-        Stores store = storesRepository.findById(storeId)
-                .orElseThrow(() -> new NullPointerException("store not found"));
+        Stores store = findStoreById(storeId);
 
         // SecurityContext에서 현재 사용자 정보 가져오기
         CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -89,8 +88,7 @@ public class MenuService {
     public MenuResponseDto updateMenu(Long storeId, Long menuId, MenuUpdateRequestDto menuUpdateRequest) {
 
         // 가게 존재 확인
-        Stores store = storesRepository.findById(storeId)
-                .orElseThrow(() -> new NullPointerException("store not found"));
+        Stores store = findStoreById(storeId);
 
         // SecurityContext에서 현재 사용자 정보 가져오기
         CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -119,8 +117,7 @@ public class MenuService {
     public void deleteMenu(Long storeId, Long menuId, MenuDeleteRequestDto menuDeleteRequest) {
 
         // 가게 존재 확인
-        Stores store = storesRepository.findById(storeId)
-                .orElseThrow(() -> new NullPointerException("store not found"));
+        Stores store = findStoreById(storeId);
 
         // SecurityContext에서 현재 사용자 정보 가져오기
         CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -154,6 +151,13 @@ public class MenuService {
                 .orElseThrow(() -> new NullPointerException("Menu not found"));
 
         return menu;
+    }
+
+    public Stores findStoreById(Long storeId) {
+        Stores store = storesRepository.findById(storeId)
+                .orElseThrow(() -> new NullPointerException("store not found"));
+
+        return store;
     }
 
 }
