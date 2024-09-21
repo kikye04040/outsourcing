@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class MenuCreateRequestDto {
 
-    private Stores storeId;
+    private Long storeId;
 
     private String name;
     private String description;
