@@ -8,8 +8,10 @@ import com.sparta.outsourcing.domain.menu.entity.Menu;
 import com.sparta.outsourcing.domain.menu.repository.MenuRepository;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
+import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import jakarta.persistence.Convert;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +30,17 @@ public class MenuService {
     @Transactional
     public MenuResponseDto createMenu(Long storeId, MenuCreateRequestDto menuCreateRequest) {
 
+        // SecurityContext에서 현재 사용자 정보 가져오기
+        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         // 가게 존재 확인
         Stores store = storesRepository.findById(storeId)
                 .orElseThrow(() -> new NullPointerException("store not found"));
 
-        // 사용자가 가게의 주인인지 확인하는 부분 추가할 것
-
+        // 사용자가 가게의 주인인지 확인
+//        if(!store.getUser.getId().equals(loginUser.getEmail())){
+//            throw new IllegalArgumentException("Store User not match");
+//        } // store에 아직 얀관관계 설정이 없는 듯?
 
         Menu menu = new Menu(
                 menuCreateRequest.getName(),
@@ -106,6 +113,16 @@ public class MenuService {
                 .orElseThrow(() -> new NullPointerException("store not found"));
 
         // 사용자가 가게의 주인인지 확인
+
+//        // 이 경우 사용자 id를 받아와야 함  다른 방법 생각
+//        if(!store.getUser.getId().equals(userId)){
+//            throw new IllegalArgumentException("Store User not match");
+//        }
+
+        // AOP를 통한 검증
+
+        // 토큰에서 받아와서 비교 < - 가장 무난 할 듯
+
 
         // 메뉴 존재 확인
         Menu menu = findMenuById(menuId);
