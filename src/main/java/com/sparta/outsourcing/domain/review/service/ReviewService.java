@@ -9,6 +9,7 @@ import com.sparta.outsourcing.domain.review.dto.CustomerReviewRequestDto;
 import com.sparta.outsourcing.domain.review.dto.CustomerReviewResponseDto;
 import com.sparta.outsourcing.domain.review.repository.OwnerReviewRepository;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
+import com.sparta.outsourcing.s3.ImageManager;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,16 +19,25 @@ public class ReviewService {
 
     private final CustomerReviewRepository customerReviewRepository;
     private final OwnerReviewRepository ownerReviewRepository;
+    private final ImageManager imageManager;
 
-    public ReviewService(CustomerReviewRepository customerReviewRepository, OwnerReviewRepository ownerReviewRepository) {
+    public ReviewService(CustomerReviewRepository customerReviewRepository, OwnerReviewRepository ownerReviewRepository, ImageManager imageManager) {
         this.customerReviewRepository = customerReviewRepository;
         this.ownerReviewRepository = ownerReviewRepository;
+        this.imageManager = imageManager;
     }
 
 
     // 리뷰 작성
     public CustomerReviewResponseDto addReview(CustomerReviewRequestDto customerReviewRequestDto) {
+
+        if(!customerReviewRequestDto.getReviewPicture().isEmpty()) {
+            String imageurl = imageManager.upload(customerReviewRequestDto.getReviewPicture());
+            customerReviewRequestDto.setReviewPictureUrl(imageurl);
+        }
+
         CustomerReview customerReview = new CustomerReview(customerReviewRequestDto);
+
         CustomerReview saved = customerReviewRepository.save(customerReview);
 
         return new CustomerReviewResponseDto(saved);
@@ -50,6 +60,11 @@ public class ReviewService {
         if(customUserDetails.getEmail() != customerReview.getUser().getEmail()) {
             // 예외처리 진행해야함
             return null;
+        }
+
+        if(!customerReviewRequestDto.getReviewPicture().isEmpty()) {
+            String imageurl = imageManager.upload(customerReviewRequestDto.getReviewPicture());
+            customerReviewRequestDto.setReviewPictureUrl(imageurl);
         }
 
         customerReview.update(customerReviewRequestDto);
