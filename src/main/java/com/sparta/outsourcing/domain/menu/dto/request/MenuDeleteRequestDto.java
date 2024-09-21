@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 public class MenuDeleteRequestDto {
 
-    private Stores stores;
+    private Long stores;
 
 }
