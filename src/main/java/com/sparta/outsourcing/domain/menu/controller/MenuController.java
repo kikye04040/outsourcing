@@ -32,7 +32,7 @@ public class MenuController {
 
     // 메뉴 수정
     @PutMapping("/stores/{storeId}/menus/{menuId}")
-    public MenuResponseDto updateManu(@PathVariable Long storeId, @PathVariable Long menuId, @RequestBody MenuUpdateRequestDto menuUpdateRequestDto) {
+    public MenuResponseDto updateMenu(@PathVariable Long storeId, @PathVariable Long menuId, @RequestBody MenuUpdateRequestDto menuUpdateRequestDto) {
         return menuService.updateMenu(storeId, menuId, menuUpdateRequestDto);
     }
 
