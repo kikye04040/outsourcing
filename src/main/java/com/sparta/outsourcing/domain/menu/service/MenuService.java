@@ -62,7 +62,7 @@ public class MenuService {
     // 메뉴 조회
     public List<MenuResponseDto> getMenus(Long storeId) {
 
-        // 가게 id가 같은 메뉴
+        // 가게 id가 같은 메뉴 조회
         List<Menu> menuList = menuRepository.findByStoreId(storeId);
 
         List<MenuResponseDto> menuResponseList = new ArrayList<>();
@@ -85,11 +85,17 @@ public class MenuService {
     @Transactional
     public MenuResponseDto updateMenu(Long menuId, MenuUpdateRequestDto menuUpdateRequest) {
 
+        // SecurityContext에서 현재 사용자 정보 가져오기
+        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         // 가게 존재 확인
         Stores store = storesRepository.findById(menuUpdateRequest.getStores().getId())
                 .orElseThrow(() -> new NullPointerException("store not found"));
 
         // 사용자가 가게의 주인인지 확인
+//        if(!store.getUser.getId().equals(loginUser.getEmail())){
+//            throw new IllegalArgumentException("Store User not match");
+//        }
 
         // 메뉴 존재 확인
         Menu menu = findMenuById(menuId);
@@ -108,6 +114,9 @@ public class MenuService {
     @Transactional
     public void deleteMenu(Long menuId, MenuDeleteRequestDto menuDeleteRequest) {
 
+        // SecurityContext에서 현재 사용자 정보 가져오기
+        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         // 가게 존재 확인
         Stores store = storesRepository.findById(menuDeleteRequest.getStores().getId())
                 .orElseThrow(() -> new NullPointerException("store not found"));
@@ -119,9 +128,12 @@ public class MenuService {
 //            throw new IllegalArgumentException("Store User not match");
 //        }
 
-        // AOP를 통한 검증
+        // AOP를 통한 검증  코드 중복은 줄어들지만 고려할 부분 있음
 
         // 토큰에서 받아와서 비교 < - 가장 무난 할 듯
+//        if(!store.getUser.getId().equals(loginUser.getEmail())){
+//            throw new IllegalArgumentException("Store User not match");
+//        }
 
 
         // 메뉴 존재 확인
