@@ -30,12 +30,12 @@ public class MenuService {
     @Transactional
     public MenuResponseDto createMenu(Long storeId, MenuCreateRequestDto menuCreateRequest) {
 
-        // SecurityContext에서 현재 사용자 정보 가져오기
-        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         // 가게 존재 확인
         Stores store = storesRepository.findById(storeId)
                 .orElseThrow(() -> new NullPointerException("store not found"));
+
+        // SecurityContext에서 현재 사용자 정보 가져오기
+        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // 사용자가 가게의 주인인지 확인
 //        if(!store.getUser.getId().equals(loginUser.getEmail())){
@@ -85,12 +85,12 @@ public class MenuService {
     @Transactional
     public MenuResponseDto updateMenu(Long menuId, MenuUpdateRequestDto menuUpdateRequest) {
 
-        // SecurityContext에서 현재 사용자 정보 가져오기
-        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         // 가게 존재 확인
         Stores store = storesRepository.findById(menuUpdateRequest.getStores().getId())
                 .orElseThrow(() -> new NullPointerException("store not found"));
+
+        // SecurityContext에서 현재 사용자 정보 가져오기
+        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // 사용자가 가게의 주인인지 확인
 //        if(!store.getUser.getId().equals(loginUser.getEmail())){
@@ -114,12 +114,12 @@ public class MenuService {
     @Transactional
     public void deleteMenu(Long menuId, MenuDeleteRequestDto menuDeleteRequest) {
 
-        // SecurityContext에서 현재 사용자 정보 가져오기
-        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         // 가게 존재 확인
         Stores store = storesRepository.findById(menuDeleteRequest.getStores().getId())
                 .orElseThrow(() -> new NullPointerException("store not found"));
+
+        // SecurityContext에서 현재 사용자 정보 가져오기
+        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // 사용자가 가게의 주인인지 확인
 
