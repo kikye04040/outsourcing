@@ -6,8 +6,7 @@ import lombok.Getter;
 @Getter
 public class MenuUpdateRequestDto {
 
-    private Stores stores;
-
+    private String menuPictureUrl;
     private String name;
     private String description;
     private Integer price;

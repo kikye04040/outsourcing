@@ -43,6 +43,7 @@ public class MenuService {
 //        } // store에 아직 얀관관계 설정이 없는 듯?
 
         Menu menu = new Menu(
+                menuCreateRequest.getMenuPictureUrl(),
                 menuCreateRequest.getName(),
                 menuCreateRequest.getDescription(),
                 menuCreateRequest.getPrice(),
@@ -52,6 +53,7 @@ public class MenuService {
         Menu savedMenu = menuRepository.save(menu);
 
         return new MenuResponseDto(
+                savedMenu.getMenuPictureUrl(),
                 savedMenu.getName(),
                 savedMenu.getDescription(),
                 savedMenu.getPrice()
@@ -70,6 +72,7 @@ public class MenuService {
         for (Menu menu : menuList) {
 
             MenuResponseDto menuResponse = new MenuResponseDto(
+                    menu.getMenuPictureUrl(),
                     menu.getName(),
                     menu.getDescription(),
                     menu.getPrice()
@@ -83,10 +86,10 @@ public class MenuService {
 
     // 메뉴 수정
     @Transactional
-    public MenuResponseDto updateMenu(Long menuId, MenuUpdateRequestDto menuUpdateRequest) {
+    public MenuResponseDto updateMenu(Long storeId, Long menuId, MenuUpdateRequestDto menuUpdateRequest) {
 
         // 가게 존재 확인
-        Stores store = storesRepository.findById(menuUpdateRequest.getStores().getId())
+        Stores store = storesRepository.findById(storeId)
                 .orElseThrow(() -> new NullPointerException("store not found"));
 
         // SecurityContext에서 현재 사용자 정보 가져오기
@@ -100,9 +103,10 @@ public class MenuService {
         // 메뉴 존재 확인
         Menu menu = findMenuById(menuId);
 
-        menu.updateMenu(menuUpdateRequest.getName(), menuUpdateRequest.getDescription(), menuUpdateRequest.getPrice());
+        menu.updateMenu(menuUpdateRequest.getMenuPictureUrl(), menuUpdateRequest.getName(), menuUpdateRequest.getDescription(), menuUpdateRequest.getPrice());
 
         return new MenuResponseDto(
+                menu.getMenuPictureUrl(),
                 menu.getName(),
                 menu.getDescription(),
                 menu.getPrice()
@@ -112,10 +116,10 @@ public class MenuService {
 
     // 메뉴 삭제
     @Transactional
-    public void deleteMenu(Long menuId, MenuDeleteRequestDto menuDeleteRequest) {
+    public void deleteMenu(Long storeId, Long menuId, MenuDeleteRequestDto menuDeleteRequest) {
 
         // 가게 존재 확인
-        Stores store = storesRepository.findById(menuDeleteRequest.getStores().getId())
+        Stores store = storesRepository.findById(storeId)
                 .orElseThrow(() -> new NullPointerException("store not found"));
 
         // SecurityContext에서 현재 사용자 정보 가져오기

@@ -17,6 +17,9 @@ public class Menu {
     private Long id;
 
     @Column(nullable = false)
+    private String menuPictureUrl;
+
+    @Column(nullable = false)
     private String name;
 
     @Column(length = 500)
@@ -33,14 +36,16 @@ public class Menu {
     private Stores store;
 
 
-    public Menu(String name, String description, Integer price, Stores store) {
+    public Menu(String menuPictureUrl, String name, String description, Integer price, Stores store) {
+        this.menuPictureUrl = menuPictureUrl;
         this.name = name;
         this.description = description;
         this.price = price;
         this.store = store;
     }
 
-    public void updateMenu(String name , String description, Integer price) {
+    public void updateMenu(String menuPictureUrl, String name , String description, Integer price) {
+        this.menuPictureUrl = menuPictureUrl;
         this.name = name;
         this.description = description;
         this.price = price;
