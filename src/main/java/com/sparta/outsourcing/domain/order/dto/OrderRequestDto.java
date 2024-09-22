@@ -2,8 +2,10 @@ package com.sparta.outsourcing.domain.order.dto;
 
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class OrderRequestDto {
-    private String menu;
-    private int totalPrice;
+    private List<Long> menuIds;
+    private Long storeId;
 }
