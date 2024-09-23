@@ -13,7 +13,7 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     @Query("SELECT c FROM Menu c JOIN FETCH c.store WHERE c.store.id = :storeId AND c.deleted = false")
     List<Menu> findByStoreId(@Param("storeId") Long storeId);
 
-    Optional<Menu> findByMenuId(Long menuId);
+    Optional<Menu> findMenuById(Long menuId);
 
     // 메뉴 이름으로 메뉴 찾기 추가 (기혜)
     Optional<Menu> findByName(String menuName);

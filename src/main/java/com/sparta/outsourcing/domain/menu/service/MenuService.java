@@ -137,7 +137,7 @@ public class MenuService {
 
     // Id 로 메뉴 찾고 존재 확인
     public Menu findMenuById(Long menuId) {
-        Menu menu = menuRepository.findByMenuId(menuId)
+        Menu menu = menuRepository.findMenuById(menuId)
                 .orElseThrow(() -> new NullPointerException("해당 메뉴를 찾을 수 없습니다."));
 
         return menu;
