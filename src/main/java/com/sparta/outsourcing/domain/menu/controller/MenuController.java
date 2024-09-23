@@ -5,23 +5,28 @@ import com.sparta.outsourcing.domain.menu.dto.request.MenuDeleteRequestDto;
 import com.sparta.outsourcing.domain.menu.dto.request.MenuUpdateRequestDto;
 import com.sparta.outsourcing.domain.menu.dto.response.MenuResponseDto;
 import com.sparta.outsourcing.domain.menu.service.MenuService;
+import com.sparta.outsourcing.domain.stores.service.StoresService;
+import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class MenuController {
 
     private final MenuService menuService;
-
-    public MenuController(MenuService menuService) {
-        this.menuService = menuService;
-    }
+    private final StoresService storesService;
 
     // 메뉴 생성
     @PostMapping("/stores/{storeId}/menus")
-    public MenuResponseDto createMenu(@PathVariable Long storeId, @RequestBody MenuCreateRequestDto menuSaveRequestDto) {
-        return menuService.createMenu(storeId, menuSaveRequestDto);
+    public MenuResponseDto createMenu(@PathVariable Long storeId,
+                                      @RequestBody MenuCreateRequestDto menuSaveRequestDto,
+                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return menuService.createMenu(storeId, menuSaveRequestDto, customUserDetails);
     }
 
     // 메뉴 조회
@@ -41,5 +46,23 @@ public class MenuController {
     public void deleteMenu(@PathVariable Long storeId, @PathVariable Long menuId, @RequestBody MenuDeleteRequestDto menuDeleterequestDto) {
         menuService.deleteMenu(storeId, menuId, menuDeleterequestDto);
     }
+    
+    
+}    
+    
 
-}
+//@RestController
+//@RequiredArgsConstructor
+//@RequestMapping("/menus")
+//public class MenuController {
+//    private final MenuService menuService;
+//    private final StoresService storesService;
+//
+//    @PostMapping
+//    public ResponseEntity<MenuResponse> saveMenu(@RequestBody MenuSaveRequest menuSaveRequest,
+//                                                 @AuthenticationPrincipal CustomUserDetails userDetails) {
+//        MenuResponse response = menuService.saveMenu(menuSaveRequest, userDetails);
+//
+//        return ResponseEntity.ok(response);
+//    }
+//}

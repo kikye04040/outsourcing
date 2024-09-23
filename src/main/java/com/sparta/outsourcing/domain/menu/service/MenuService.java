@@ -9,14 +9,16 @@ import com.sparta.outsourcing.domain.menu.repository.MenuRepository;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
-import jakarta.persistence.Convert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sparta.outsourcing.domain.user.entity.Role.ROLE_OWNER;
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +27,18 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final StoresRepository storesRepository;
 
-
     // 메뉴 생성
     @Transactional
-    public MenuResponseDto createMenu(Long storeId, MenuCreateRequestDto menuCreateRequest) {
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    public MenuResponseDto createMenu(Long storeId, MenuCreateRequestDto menuCreateRequest , CustomUserDetails userDetails) {
 
         // 가게 존재 확인
         Stores store = findStoreById(storeId);
+
+        // 유저가 OWNER 인지 확인
+        if (!userDetails.getRole().equals(ROLE_OWNER)) {
+            throw new IllegalArgumentException("오너 계정만 가게를 생성할 수 있습니다.");
+        }
 
         // SecurityContext에서 현재 사용자 정보 가져오기
         CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -148,14 +155,14 @@ public class MenuService {
     // Id 로 메뉴 찾고 존재 확인
     public Menu findMenuById(Long menuId) {
         Menu menu = menuRepository.findByMenuId(menuId)
-                .orElseThrow(() -> new NullPointerException("Menu not found"));
+                .orElseThrow(() -> new NullPointerException("해당 메뉴를 찾을 수 없습니다."));
 
         return menu;
     }
 
     public Stores findStoreById(Long storeId) {
         Stores store = storesRepository.findById(storeId)
-                .orElseThrow(() -> new NullPointerException("store not found"));
+                .orElseThrow(() -> new NullPointerException("해당 가게를 찾을 수 없습니다."));
 
         return store;
     }
