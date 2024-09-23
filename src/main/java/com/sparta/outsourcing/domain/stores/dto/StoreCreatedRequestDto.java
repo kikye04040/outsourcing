@@ -9,6 +9,7 @@ public class StoreCreatedRequestDto {
     private int type;
     private String category;
     private String address;
+    private int minDeliveryPrice;
     private String phone;
 
     private String contents;

@@ -76,7 +76,8 @@ public class Stores extends Timestamped {
 //    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
 //    private List<Carts> Carts = new ArrayList<>();
 
-    public Stores(String name, int type, String category, String address, String phone, String contents, String storePictureUrl, int deliveryTip,
+    public Stores(String name, int type, String category, String address, String storePictureUrl,
+                  String phone, String contents, int minDeliveryPrice, int deliveryTip,
                   String operationHours, String closedDays, User user) {
         this.name = name;
         this.type = type;
@@ -90,6 +91,7 @@ public class Stores extends Timestamped {
         this.closedDays = closedDays;
         this.storeStatus = StoreStatus.Running;
         this.user = user;
+        this.minDeliveryPrice = minDeliveryPrice;
     }
 
 
