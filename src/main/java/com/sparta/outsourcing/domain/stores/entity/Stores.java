@@ -70,7 +70,7 @@ public class Stores {
 //    private List<Carts> Carts = new ArrayList<>();
 
     public Stores(String name, int type, String category, String address, String phone, String contents, String storePictureUrl, int deliveryTip,
-                  String operationHours, String closedDays, User user) {
+                  String operationHours, String closedDays, User user, int minDeliveryPrice) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -83,6 +83,7 @@ public class Stores {
         this.closedDays = closedDays;
         this.storeStatus = StoreStatus.Running;
         this.user = user;
+        this.minDeliveryPrice = minDeliveryPrice;
     }
 
 

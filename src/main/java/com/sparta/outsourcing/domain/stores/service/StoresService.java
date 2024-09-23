@@ -37,6 +37,7 @@ public class StoresService {
             throw new IllegalArgumentException("가게는 3개 이하만 생성할 수 있습니다.");
         }
 
+        // 유저 상태 확인(NORMAL)
         User user = userRepository.findByEmailOrElseThrow(userDetails.getEmail());
 
         Stores newStores = new Stores(
@@ -50,7 +51,8 @@ public class StoresService {
             req.getDeliveryTip(),
             req.getOperationHours(),
             req.getClosedDays(),
-                user
+                user,
+            req.getMinDeliveryPrice()
         );
 
         Stores savedStores = storesRepository.save(newStores);
