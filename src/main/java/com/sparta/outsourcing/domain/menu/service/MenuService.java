@@ -30,23 +30,25 @@ public class MenuService {
     // 메뉴 생성
     @Transactional
     @PreAuthorize("hasAuthority('ROLE_OWNER')")
-    public MenuResponseDto createMenu(Long storeId, MenuCreateRequestDto menuCreateRequest , CustomUserDetails userDetails) {
+    public MenuResponseDto createMenu(Long storeId,
+                                      MenuCreateRequestDto menuCreateRequest ,
+                                      CustomUserDetails userDetails) {
 
         // 가게 존재 확인
         Stores store = findStoreById(storeId);
 
-        // 유저가 OWNER 인지 확인
-        if (!userDetails.getRole().equals(ROLE_OWNER)) {
-            throw new IllegalArgumentException("오너 계정만 가게를 생성할 수 있습니다.");
-        }
+//        // 유저가 OWNER 인지 확인
+//        if (!userDetails.getRole().equals(ROLE_OWNER)) {
+//            throw new IllegalArgumentException("오너 계정만 메뉴를 생성할 수 있습니다.");
+//        } // @PreAuthorize("hasAuthority('ROLE_OWNER')") 로 이미 검증 한 상태?
 
-        // SecurityContext에서 현재 사용자 정보 가져오기
-        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        // 사용자가 가게의 주인인지 확인
+//        if(!store.getUser().getId().equals(userDetails.getEmail())){
+//            throw new IllegalArgumentException("store user not match");
+//        }
 
         // 사용자가 가게의 주인인지 확인
-//        if(!store.getUser.getId().equals(loginUser.getEmail())){
-//            throw new IllegalArgumentException("Store User not match");
-//        } // store에 아직 얀관관계 설정이 없는 듯?
+        storeUserMatch(store, userDetails);
 
         Menu menu = new Menu(
                 menuCreateRequest.getMenuPictureUrl(),
@@ -92,18 +94,15 @@ public class MenuService {
 
     // 메뉴 수정
     @Transactional
-    public MenuResponseDto updateMenu(Long storeId, Long menuId, MenuUpdateRequestDto menuUpdateRequest) {
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    public MenuResponseDto updateMenu(Long storeId, Long menuId,
+                                      MenuUpdateRequestDto menuUpdateRequest,
+                                      CustomUserDetails userDetails) {
 
         // 가게 존재 확인
         Stores store = findStoreById(storeId);
 
-        // SecurityContext에서 현재 사용자 정보 가져오기
-        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        // 사용자가 가게의 주인인지 확인
-//        if(!store.getUser.getId().equals(loginUser.getEmail())){
-//            throw new IllegalArgumentException("Store User not match");
-//        }
+        storeUserMatch(store, userDetails);
 
         // 메뉴 존재 확인
         Menu menu = findMenuById(menuId);
@@ -121,28 +120,15 @@ public class MenuService {
 
     // 메뉴 삭제
     @Transactional
-    public void deleteMenu(Long storeId, Long menuId, MenuDeleteRequestDto menuDeleteRequest) {
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    public void deleteMenu(Long storeId, Long menuId,
+                           MenuDeleteRequestDto menuDeleteRequest,
+                           CustomUserDetails userDetails) {
 
         // 가게 존재 확인
         Stores store = findStoreById(storeId);
 
-        // SecurityContext에서 현재 사용자 정보 가져오기
-        CustomUserDetails loginUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        // 사용자가 가게의 주인인지 확인
-
-//        // 이 경우 사용자 id를 받아와야 함  다른 방법 생각
-//        if(!store.getUser.getId().equals(userId)){
-//            throw new IllegalArgumentException("Store User not match");
-//        }
-
-        // AOP를 통한 검증  코드 중복은 줄어들지만 고려할 부분 있음
-
-        // 토큰에서 받아와서 비교 < - 가장 무난 할 듯
-//        if(!store.getUser.getId().equals(loginUser.getEmail())){
-//            throw new IllegalArgumentException("Store User not match");
-//        }
-
+        storeUserMatch(store, userDetails);
 
         // 메뉴 존재 확인
         Menu menu = findMenuById(menuId);
@@ -160,11 +146,19 @@ public class MenuService {
         return menu;
     }
 
+    // Id로 가게 찾고 존재 확인
     public Stores findStoreById(Long storeId) {
         Stores store = storesRepository.findById(storeId)
                 .orElseThrow(() -> new NullPointerException("해당 가게를 찾을 수 없습니다."));
 
         return store;
+    }
+
+    // 사용자가 가게의 주인인지 확인
+    public void storeUserMatch(Stores store, CustomUserDetails userDetails) {
+        if(!store.getUser().getId().equals(userDetails.getEmail())){
+            throw new IllegalArgumentException("store user not match");
+        }
     }
 
 }
