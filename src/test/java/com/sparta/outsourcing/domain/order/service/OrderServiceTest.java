@@ -71,7 +71,7 @@ public class OrderServiceTest {
 
         userDetails = mock(CustomUserDetails.class);
         when(userDetails.getEmail()).thenReturn("test@example.com");
-        when(userDetails.getRole()).thenReturn(Role.ROLE_USER);;
+        when(userDetails.getRole()).thenReturn(Role.ROLE_USER);
     }
 
     @Test

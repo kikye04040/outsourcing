@@ -6,4 +6,8 @@ import lombok.Getter;
 @Getter
 public class OrderStatusUpdateRequestDto {
     private OrderStatusEnum status;
+
+    public OrderStatusUpdateRequestDto(OrderStatusEnum status) {
+        this.status = status;
+    }
 }
