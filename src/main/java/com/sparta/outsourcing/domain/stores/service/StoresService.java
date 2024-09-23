@@ -17,6 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.sparta.outsourcing.domain.user.entity.Role.ROLE_OWNER;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,8 +31,13 @@ public class StoresService {
         // 유저 상태 확인(NORMAL)
         User user = userRepository.findByEmailOrElseThrow(userDetails.getEmail());
 
-        // 해당 유저의 가게가 몇개 있는지 확인(최대 3개)
-        if(storesRepository.countByUserId(user.getId()) > 4){
+        // 유저가 OWNER 인지 확인
+        if (!userDetails.getRole().equals(ROLE_OWNER)) {
+            throw new IllegalArgumentException("오너 계정만 가게를 생성할 수 있습니다.");
+        }
+
+        // 유저가 최대 가게 개수(3개)를 초과했는지 확인
+        if(storesRepository.countByUserId(user.getId()) >= 3){
             throw new IllegalArgumentException("가게 생성은 최대 3개까지만 가능합니다.");
         };
 
@@ -159,4 +166,5 @@ public class StoresService {
             req.getMaxDeliveryTime()
         ));
     }
+
 }
