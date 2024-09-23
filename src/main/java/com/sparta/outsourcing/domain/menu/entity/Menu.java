@@ -37,6 +37,10 @@ public class Menu {
 
 
     public Menu(String menuPictureUrl, String name, String description, Integer price, Stores store) {
+        if (price < 0) {
+            throw new IllegalArgumentException("가격 음수 등록 불가");
+        }
+
         this.menuPictureUrl = menuPictureUrl;
         this.name = name;
         this.description = description;
@@ -45,6 +49,10 @@ public class Menu {
     }
 
     public void updateMenu(String menuPictureUrl, String name , String description, Integer price) {
+        if (price < 0) {
+            throw new IllegalArgumentException("가격 음수 등록 불가");
+        }
+
         this.menuPictureUrl = menuPictureUrl;
         this.name = name;
         this.description = description;
