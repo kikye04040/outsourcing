@@ -10,15 +10,12 @@ import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.sparta.outsourcing.domain.user.entity.Role.ROLE_OWNER;
 
 @Service
 @RequiredArgsConstructor
@@ -157,7 +154,7 @@ public class MenuService {
     // 사용자가 가게의 주인인지 확인
     public void storeUserMatch(Stores store, CustomUserDetails userDetails) {
         if(!store.getUser().getId().equals(userDetails.getEmail())){
-            throw new IllegalArgumentException("store user not match");
+            throw new IllegalArgumentException("해당 가게의 주인이 아닙니다");
         }
     }
 
