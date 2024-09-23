@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface MenuRepository extends JpaRepository<Menu, Long> {
 
-    @Query("SELECT c FROM Menu c JOIN FETCH c.store WHERE c.store.storeId = :storeId AND c.deleted = false")
+    @Query("SELECT c FROM Menu c JOIN FETCH c.store WHERE c.store.id = :storeId AND c.deleted = false")
     List<Menu> findByStoreId(@Param("storeId") Long storeId);
 
     Optional<Menu> findByMenuId(Long menuId);
