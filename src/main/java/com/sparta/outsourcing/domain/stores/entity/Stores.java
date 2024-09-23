@@ -1,6 +1,7 @@
 package com.sparta.outsourcing.domain.stores.entity;
 
 import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
+import com.sparta.outsourcing.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,10 +53,9 @@ public class Stores {
     @Enumerated(EnumType.STRING)
     private StoreStatus storeStatus;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "userId", nullable = false)
-//    private User user;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
 //    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
 //    private List<Review> reviews = new ArrayList<>();
@@ -70,7 +70,7 @@ public class Stores {
 //    private List<Carts> Carts = new ArrayList<>();
 
     public Stores(String name, int type, String category, String address, String phone, String contents, String storePictureUrl, int deliveryTip,
-                  String operationHours, String closedDays) {
+                  String operationHours, String closedDays, User user) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -82,6 +82,7 @@ public class Stores {
         this.operationHours = operationHours;
         this.closedDays = closedDays;
         this.storeStatus = StoreStatus.Running;
+        this.user = user;
     }
 
 
@@ -104,7 +105,7 @@ public class Stores {
     // 가게가 현재 영업 중인지 체크하는 메서드
     public boolean isOpen() {
         // 현재 시간이 가게의 오픈 시간과 마감 시간 사이에 있는지 확인
-        String[] hours = operationHours.split("-");
+        String[] hours = operationHours.split("~");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
         LocalTime openTime = LocalTime.parse(hours[0], formatter);

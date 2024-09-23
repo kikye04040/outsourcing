@@ -2,9 +2,12 @@ package com.sparta.outsourcing.domain.stores.controller;
 
 import com.sparta.outsourcing.domain.stores.dto.*;
 import com.sparta.outsourcing.domain.stores.service.StoresService;
+import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,8 +17,11 @@ public class StoresController {
     private final StoresService storesService;
 
     @PostMapping("/stores")
-    public StoreResponseDto createStore(@RequestBody StoreCreatedRequestDto storeCreatedRequestDto){
-        return storesService.createStore(storeCreatedRequestDto);
+    public ResponseEntity<StoreResponseDto> createStore(
+            @RequestBody StoreCreatedRequestDto storeCreatedRequestDto,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        StoreResponseDto responseDto = storesService.createStore(storeCreatedRequestDto, userDetails);
+        return ResponseEntity.ok(responseDto);
     }
 
     // 전체 조회

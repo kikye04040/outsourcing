@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StoresRepository extends JpaRepository<Stores, Long> {
     Page<Stores> findByNameContaining(String keyword, Pageable pageable);
+
+    int countByUser_Email(String email);
 }

@@ -6,11 +6,17 @@ import com.sparta.outsourcing.domain.order.dto.OrderStatusUpdateRequestDto;
 import com.sparta.outsourcing.domain.order.entity.Order;
 import com.sparta.outsourcing.domain.order.service.OrderService;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
+import com.sparta.outsourcing.domain.user.entity.Role;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static com.sparta.outsourcing.domain.user.entity.Role.ROLE_USER;
 
 @RestController
 @RequestMapping("/orders")
@@ -20,20 +26,15 @@ public class OrderController {
     private final OrderService orderService;
 
     // USER 권한을 가진 사용자가 주문 생성
-    @PostMapping("/{storeId}/order")
+    @PostMapping
     public ResponseEntity<OrderResponseDto> createOrder(
-            @PathVariable Long storeId,
             @RequestBody OrderRequestDto requestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        // 사용자 역할 확인
-        if (!userDetails.getRole().name().equals("ROLE_USER")) {
-            throw new IllegalArgumentException("인증된 사용자가 아닙니다.");
-        }
+        Order order = orderService.createOrder(requestDto, userDetails);
 
-        // 주문 생성
-        Order order = orderService.createOrder(storeId, requestDto.getMenu(), requestDto.getTotalPrice());
-        return ResponseEntity.ok(new OrderResponseDto(order));
+        OrderResponseDto responseDto = new OrderResponseDto(order);
+        return ResponseEntity.ok(responseDto);
     }
 
     // OWNER 권한을 가진 사용자가 주문 상태 변경
