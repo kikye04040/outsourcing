@@ -3,11 +3,14 @@ package com.sparta.outsourcing.domain.order.entity;
 import com.sparta.outsourcing.domain.menu.entity.Menu;
 import com.sparta.outsourcing.domain.order.enums.OrderStatusEnum;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
+import com.sparta.outsourcing.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -22,9 +25,17 @@ public class Order {
     @JoinColumn(name = "store_id", nullable = false)
     private Stores store;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "order_menus",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "menu_id")
+    )
+    private List<Menu> menus = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id", nullable = false)
-    private Menu menu;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     private Integer totalPrice;
 
@@ -33,9 +44,11 @@ public class Order {
 
     private LocalDateTime createdAt;
 
-    public Order(Stores store, Menu menu, Integer totalPrice) {
+    // 여러 메뉴를 받는 생성자
+    public Order(Stores store, List<Menu> menus, User user, Integer totalPrice) {
         this.store = store;
-        this.menu = menu;
+        this.menus = menus;
+        this.user = user;
         this.totalPrice = totalPrice;
         this.status = OrderStatusEnum.NEW;
         this.createdAt = LocalDateTime.now();

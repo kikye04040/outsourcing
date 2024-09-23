@@ -4,6 +4,9 @@ import com.sparta.outsourcing.domain.stores.dto.*;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
 import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
+import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
+import com.sparta.outsourcing.domain.user.entity.User;
+import com.sparta.outsourcing.domain.user.repository.UserRepository;
 import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,15 +16,28 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.sparta.outsourcing.domain.user.entity.Role.ROLE_OWNER;
+
 @Service
 @RequiredArgsConstructor
 public class StoresService {
     private final StoresRepository storesRepository;
+    private final UserRepository userRepository;
 
-    @PreAuthorize("hasAuthority('CEO')")
-    public StoreResponseDto createStore(StoreCreatedRequestDto req) {
-        // token으로 유저 가게가 몇개 있는지 확인(최대 3개)
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    public StoreResponseDto createStore(StoreCreatedRequestDto req, CustomUserDetails userDetails) {
 
+        // 유저가 OWNER 인지 확인
+        if (!userDetails.getRole().equals(ROLE_OWNER)) {
+            throw new IllegalArgumentException("오너 계정만 가게를 생성할 수 있습니다.");
+        }
+
+        // 유저가 최대 가게 개수를 초과했는지 확인
+        if (getStoreCountByUser(userDetails.getEmail()) >= 3) {
+            throw new IllegalArgumentException("가게는 3개 이하만 생성할 수 있습니다.");
+        }
+
+        User user = userRepository.findByEmailOrElseThrow(userDetails.getEmail());
 
         Stores newStores = new Stores(
             req.getName(),
@@ -33,13 +49,14 @@ public class StoresService {
             req.getStorePictureUrl(),
             req.getDeliveryTip(),
             req.getOperationHours(),
-            req.getClosedDays()
+            req.getClosedDays(),
+                user
         );
 
         Stores savedStores = storesRepository.save(newStores);
 
         return new StoreResponseDto(
-            "Store created successfully",
+            "가게가 성공적으로 생성되었습니다.",
             savedStores.getName(),
             200
         );
@@ -145,5 +162,9 @@ public class StoresService {
             req.getMinDeliveryTime(),
             req.getMaxDeliveryTime()
         ));
+    }
+
+    public int getStoreCountByUser(String email) {
+        return storesRepository.countByUser_Email(email);
     }
 }

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table
+@Table(name = "CustomerReview")
 public class CustomerReview {
 
     @Id
@@ -65,7 +65,6 @@ public class CustomerReview {
         this.status = StatusType.ACTIVATE;
         this.order = customerReviewRequestDto.getOrder();
         this.user = customerReviewRequestDto.getUser();
-        this.store = customerReviewRequestDto.getStore();
     }
 
     public void update(CustomerReviewRequestDto customerReviewRequestDto) {

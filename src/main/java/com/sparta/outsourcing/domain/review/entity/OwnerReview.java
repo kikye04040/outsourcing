@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Where(clause = "status <> 'DELETED'")
-@Table
+@Table(name = "OwnerReview")
 public class OwnerReview extends Timestamped {
 
     @Id
@@ -41,8 +41,8 @@ public class OwnerReview extends Timestamped {
     private User user;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "reviewId", nullable = false)
-    private CustomerReview CustomerReview;
+    @JoinColumn(name = "customerReview", nullable = false)
+    private CustomerReview customerReview;
 
 
     public OwnerReview(OwnerReviewRequestDto ownerReviewRequestDto) {

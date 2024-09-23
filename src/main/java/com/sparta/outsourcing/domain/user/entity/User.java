@@ -1,5 +1,6 @@
 package com.sparta.outsourcing.domain.user.entity;
 
+import com.sparta.outsourcing.domain.stores.entity.Stores;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -43,6 +45,9 @@ public class User {
     private LocalDateTime createdDate;
 
     private LocalDateTime modifiedDate;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Stores> stores;
 
     @Builder
     private User(String email, String password, String phone, String name, Role role, Grade grade, Status status, String currentAddress, LocalDateTime createdDate, LocalDateTime modifiedDate) {
