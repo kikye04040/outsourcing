@@ -7,6 +7,7 @@ import com.sparta.outsourcing.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import com.sparta.outsourcing.domain.menu.entity.Menu;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -25,7 +26,7 @@ public class Stores extends Timestamped {
 
     private String name;
 
-    private int type;
+    private int type;   // 배달 or 포장
 
     private String category;
 

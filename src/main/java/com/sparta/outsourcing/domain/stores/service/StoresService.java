@@ -10,6 +10,7 @@ import com.sparta.outsourcing.domain.user.entity.User;
 import com.sparta.outsourcing.domain.user.repository.UserRepository;
 import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StoresService {
     private final StoresRepository storesRepository;
     private final UserRepository userRepository;
 
-    //@PreAuthorize("hasAuthority('CEO')")
+    @PreAuthorize("hasRole('OWNER')")
     public StoreResponseDto createStore(StoreCreatedRequestDto req, CustomUserDetails userDetails) {
         // 유저 상태 확인(NORMAL)
         User user = userRepository.findByEmailOrElseThrow(userDetails.getEmail());
@@ -142,12 +144,12 @@ public class StoresService {
     }
 
 
-    @Transactional
+
     public Page<StoresSimpleResponseDto> searchStores(String keyword, int page, int size){
         Pageable pageable = PageRequest.of(page-1 , size);
 
         Page<Stores> storesList = storesRepository.findByNameContaining(keyword, pageable);
-
+        log.info("Service Keyword: "+ keyword);
         return storesList.map(req -> new StoresSimpleResponseDto(
             req.getName(),
             req.getStorePictureUrl(),

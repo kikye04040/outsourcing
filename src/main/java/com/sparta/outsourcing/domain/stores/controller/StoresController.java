@@ -4,6 +4,7 @@ import com.sparta.outsourcing.domain.stores.dto.*;
 import com.sparta.outsourcing.domain.stores.service.StoresService;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class StoresController {
 
     private final StoresService storesService;
@@ -28,9 +30,11 @@ public class StoresController {
     }
 
     // 가게명 검색
-    @PostMapping("/stores/{keyword}")
-    public ResponseEntity<Page<StoresSimpleResponseDto>> searchStores(@PathVariable String keyword, @RequestParam(defaultValue = "1") int page,
-                                                                        @RequestParam(defaultValue = "10") int size){
+    @GetMapping("/stores/search")
+    public ResponseEntity<Page<StoresSimpleResponseDto>> searchStores(@RequestParam String keyword,
+                                                                      @RequestParam(defaultValue = "1") int page,
+                                                                      @RequestParam(defaultValue = "10") int size) {
+        log.info("Controller Keyword: " + keyword);
         return ResponseEntity.ok(storesService.searchStores(keyword, page, size));
     }
 
