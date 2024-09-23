@@ -30,6 +30,10 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> createOrder(
             @RequestBody OrderRequestDto requestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
+        // 사용자 역할 확인을 먼저 수행
+        if (!userDetails.getRole().equals(ROLE_USER)) {
+            throw new IllegalArgumentException("사용자 계정으로만 주문이 가능합니다.");
+        }
 
         Order order = orderService.createOrder(requestDto, userDetails);
 
