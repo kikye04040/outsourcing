@@ -42,16 +42,20 @@ public class MenuController {
     // 메뉴 수정
     @PutMapping("/stores/{storeId}/menus/{menuId}")
     public ResponseEntity<MenuResponseDto> updateMenu(@PathVariable Long storeId,
-                                                      @PathVariable Long menuId, @RequestBody MenuUpdateRequestDto menuUpdateRequestDto) {
-        MenuResponseDto menuResponseDto = menuService.updateMenu(storeId, menuId, menuUpdateRequestDto);
+                                                      @PathVariable Long menuId,
+                                                      @RequestBody MenuUpdateRequestDto menuUpdateRequestDto,
+                                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        MenuResponseDto menuResponseDto = menuService.updateMenu(storeId, menuId, menuUpdateRequestDto, customUserDetails);
 
         return ResponseEntity.ok(menuResponseDto);
     }
 
     // 메뉴 삭제 상태로 변경
     @PutMapping("/stores/{storeId}/menus/{menuId}/delete")
-    public void deleteMenu(@PathVariable Long storeId, @PathVariable Long menuId, @RequestBody MenuDeleteRequestDto menuDeleterequestDto) {
-        menuService.deleteMenu(storeId, menuId, menuDeleterequestDto);
+    public void deleteMenu(@PathVariable Long storeId, @PathVariable Long menuId,
+                           @RequestBody MenuDeleteRequestDto menuDeleterequestDto,
+                           @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        menuService.deleteMenu(storeId, menuId, menuDeleterequestDto, customUserDetails);
     }
     
     
