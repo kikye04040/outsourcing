@@ -119,6 +119,7 @@ public class ReviewService {
         return new OwnerReviewResponseDto(ownerReview);
     }
 
+    // 사장 리뷰 삭제
     public String deleteSubReview(CustomUserDetails customUserDetails, Long reviewId) {
 
         OwnerReview ownerReview = ownerReviewRepository.findById(reviewId).orElseThrow();
