@@ -1,6 +1,6 @@
 package com.sparta.outsourcing.domain.menu.entity;
 
-import com.sparta.outsourcing.domain.menu.dto.request.MenuSaveRequest;
+import com.sparta.outsourcing.domain.stores.entity.Stores;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,15 +27,16 @@ public class Menu {
     @Column(nullable = false)
     private Boolean deleted = false;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "storeId", nullable = false)
-//    private Store store;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Stores store;
 
 
-    public Menu(String name, String description, Integer price) {
+    public Menu(String name, String description, Integer price, Stores store) {
         this.name = name;
         this.description = description;
         this.price = price;
+        this.store = store;
     }
 
     public void update(String name , String description, Integer price) {
