@@ -23,22 +23,29 @@ public class MenuController {
 
     // 메뉴 생성
     @PostMapping("/stores/{storeId}/menus")
-    public MenuResponseDto createMenu(@PathVariable Long storeId,
+    public ResponseEntity<MenuResponseDto> createMenu(@PathVariable Long storeId,
                                       @RequestBody MenuCreateRequestDto menuSaveRequestDto,
                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        return menuService.createMenu(storeId, menuSaveRequestDto, customUserDetails);
+        MenuResponseDto menuResponseDto = menuService.createMenu(storeId, menuSaveRequestDto, customUserDetails);
+
+        return ResponseEntity.ok(menuResponseDto);
     }
 
     // 메뉴 조회
     @GetMapping("/stores/{storeId}/menus")
-    public List<MenuResponseDto> getMenus(@PathVariable Long storeId) {
-        return menuService.getMenus(storeId);
+    public ResponseEntity<List<MenuResponseDto>> getMenus(@PathVariable Long storeId) {
+        List<MenuResponseDto> menuResponseDtos = menuService.getMenus(storeId);
+
+        return ResponseEntity.ok(menuResponseDtos);
     }
 
     // 메뉴 수정
     @PutMapping("/stores/{storeId}/menus/{menuId}")
-    public MenuResponseDto updateMenu(@PathVariable Long storeId, @PathVariable Long menuId, @RequestBody MenuUpdateRequestDto menuUpdateRequestDto) {
-        return menuService.updateMenu(storeId, menuId, menuUpdateRequestDto);
+    public ResponseEntity<MenuResponseDto> updateMenu(@PathVariable Long storeId,
+                                                      @PathVariable Long menuId, @RequestBody MenuUpdateRequestDto menuUpdateRequestDto) {
+        MenuResponseDto menuResponseDto = menuService.updateMenu(storeId, menuId, menuUpdateRequestDto);
+
+        return ResponseEntity.ok(menuResponseDto);
     }
 
     // 메뉴 삭제 상태로 변경
