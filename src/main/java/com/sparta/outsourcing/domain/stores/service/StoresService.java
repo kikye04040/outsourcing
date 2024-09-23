@@ -5,7 +5,6 @@ import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
 import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
-import com.sparta.outsourcing.domain.user.entity.Status;
 import com.sparta.outsourcing.domain.user.entity.User;
 import com.sparta.outsourcing.domain.user.repository.UserRepository;
 import com.sun.jdi.request.InvalidRequestStateException;
