@@ -42,18 +42,27 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // 토큰 생성
-    public String createToken(CustomUserDetails user, String role) {
+    // 토큰 생성 TODO: 굳이 CustomuserDetails 가 role을 가지고있는데 굳이 role 을 인자로 받아야 하는가?
+    public String createToken(String category, CustomUserDetails user, String role, Long expireMs) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
+                        .claim("category", category)
                         .claim("email", user.getEmail())
                         .claim("role", role)
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
+                        .setExpiration(new Date(date.getTime() + expireMs)) // 만료 시간
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                         .compact();
+    }
+
+    public String getCategory(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("category", String.class);
+    }
+
+    public String getEmail(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("email", String.class);
     }
 
     // JWT 를 HTTP 헤더에 추가
@@ -100,12 +109,16 @@ public class JwtUtil {
     public String getTokenFromRequest(HttpServletRequest req) {
         String token = req.getHeader(AUTHORIZATION_HEADER);
         if (token != null) {
-            try{
+            try {
                 return URLDecoder.decode(token, "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 return null;
             }
         }
         return null;
+    }
+
+    public Boolean isExpired(String token) { // TODO: 에러를 던질지 false 를 반환할지
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getExpiration().before(new Date());
     }
 }

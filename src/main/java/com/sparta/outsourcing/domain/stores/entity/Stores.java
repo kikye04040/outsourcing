@@ -36,16 +36,6 @@ public class Stores {
 
     private int deliveryTip;
 
-    private int minDeliveryTime;
-
-    private int maxDeliveryTime;
-
-    private DecimalFormat rating;
-
-    private int dibsCount;
-
-    private int reviewCount;
-
     private String operationHours;
 
     private String closedDays;
@@ -70,7 +60,7 @@ public class Stores {
 //    private List<Carts> Carts = new ArrayList<>();
 
     public Stores(String name, int type, String category, String address, String phone, String contents, String storePictureUrl, int deliveryTip,
-                  String operationHours, String closedDays, User user) {
+                  String operationHours, String closedDays, User user, int minDeliveryPrice) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -83,11 +73,16 @@ public class Stores {
         this.closedDays = closedDays;
         this.storeStatus = StoreStatus.Running;
         this.user = user;
+        this.minDeliveryPrice = minDeliveryPrice;
     }
 
 
-    public void update(String name, String address, String storePictureUrl, String phone, String contents, int minDeliveryPrice, int deliveryTip, String operationHours, String closedDays) {
+    public void update(String name, int type, String category, String address,
+                       String storePictureUrl, String phone, String contents,
+                       int deliveryTip, String operationHours, String closedDays, int minDeliveryPrice) {
         this.name = name;
+        this.type = type;
+        this.category = category;
         this.address = address;
         this.phone = phone;
         this.contents = contents;

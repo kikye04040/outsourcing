@@ -32,8 +32,8 @@ public class StoresController {
     }
 
     // 가게명 검색
-    @PostMapping("/stores/{keyword}")
-    public ResponseEntity<Page<StoresSimpleResponseDto>> searchStores(@PathVariable String keyword, @RequestParam(defaultValue = "1") int page,
+    @GetMapping("/stores/search")
+    public ResponseEntity<Page<StoresSimpleResponseDto>> searchStores(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page,
                                                                         @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(storesService.searchStores(keyword, page, size));
     }

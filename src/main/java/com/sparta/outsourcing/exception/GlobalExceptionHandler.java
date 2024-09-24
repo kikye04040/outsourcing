@@ -1,16 +1,15 @@
 package com.sparta.outsourcing.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.naming.AuthenticationException;
 
 @Slf4j
 @RestControllerAdvice
@@ -43,5 +42,23 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handlerGeneralException(Exception e) {
         log.error("Exception", e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException e) {
+        BindingResult bindingResult = e.getBindingResult();
+
+        StringBuilder sb = new StringBuilder();
+        for (FieldError fieldError : bindingResult.getFieldErrors()) {
+            sb.append("[");
+            sb.append(fieldError.getField());
+            sb.append("](은)는 ");
+            sb.append(fieldError.getDefaultMessage());
+            sb.append(" 입력된 값: [");
+            sb.append(fieldError.getRejectedValue());
+            sb.append("]");
+        }
+
+        return new ResponseEntity<>(sb.toString(), HttpStatus.BAD_REQUEST);
     }
 }
