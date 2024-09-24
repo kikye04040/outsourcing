@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,36 +15,36 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<String> handleCustomException(BadRequestException e) {
+    public ResponseEntity<ErrorResponse> handleCustomException(BadRequestException e) {
         log.error(e.getMessage());
-        return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<String> handleAuthenticationException(UnauthorizedException e) {
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(UnauthorizedException e) {
         log.error(e.getMessage());
-        return new ResponseEntity<>("인증이 필요합니다.", HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<String> handleForbidden(ForbiddenException e) {
-        return new ResponseEntity<>("접근이 금지되었습니다.", HttpStatus.FORBIDDEN);
+    public ResponseEntity<ErrorResponse> handleForbidden(ForbiddenException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<String> handleNotFound(NotFoundException e) {
-        return new ResponseEntity<>("리소스를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(e.getMessage()));
     }
 
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handlerGeneralException(Exception e) {
+    public ResponseEntity<ErrorResponse> handlerGeneralException(Exception e) {
         log.error("Exception", e);
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.internalServerError().body(new ErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
 
         StringBuilder sb = new StringBuilder();
@@ -59,6 +58,6 @@ public class GlobalExceptionHandler {
             sb.append("]");
         }
 
-        return new ResponseEntity<>(sb.toString(), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(sb.toString()));
     }
 }
