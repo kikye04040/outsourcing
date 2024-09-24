@@ -203,4 +203,27 @@ public class MenuServiceTest {
     }
 
 
+    @Test
+    @DisplayName("주인 확인 정상 작동")
+    void storeUserMatch() {
+
+        when(userDetails.getEmail()).thenReturn(mockUser.getEmail());
+
+        assertDoesNotThrow(() -> menuService.storeUserMatch(mockStore, userDetails));
+
+    }
+
+
+    @Test
+    @DisplayName("주인 확인 예외")
+    void storeUserNotMatch() {
+        when(userDetails.getEmail()).thenReturn("notemail@email.com");
+
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> menuService.storeUserMatch(mockStore, userDetails));
+        assertEquals("해당 가게의 주인이 아닙니다", exception.getMessage());
+
+    }
+
+
 }
