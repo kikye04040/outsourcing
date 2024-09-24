@@ -21,6 +21,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,6 +45,7 @@ public class MenuServiceTest {
 
     private User mockUser;
     private Stores mockStore;
+    private Menu mockMenu;
     private CustomUserDetails userDetails;
 
     @BeforeEach //각각의 테스트 코드가 실행되기 전에 수행
@@ -74,6 +77,19 @@ public class MenuServiceTest {
         userDetails = mock(CustomUserDetails.class);
         when(userDetails.getEmail()).thenReturn("email@email.com");
         when(userDetails.getRole()).thenReturn(Role.ROLE_OWNER);
+
+        mockMenu = new Menu(
+                "이미지 주소",
+                "이름",
+                "설명",
+                15000,
+                mockStore
+        );
+        ReflectionTestUtils.setField(mockMenu,
+                "id",
+                1L
+        );
+
     }
 
     @Test
@@ -118,6 +134,17 @@ public class MenuServiceTest {
     @Test
     @DisplayName("getMenus 정상 작동")
     void getMenus() {
+        // given
+        List<Menu> menuList = new ArrayList<>();
+        menuList.add(mockMenu);
+        when(menuRepository.findByStoreId(mockStore.getId())).thenReturn(menuList);
+
+        // when
+        List<MenuResponseDto> responseDtoList = menuService.getMenus(mockStore.getId());
+
+        // then
+        assertNotNull(responseDtoList);
+        assertEquals(mockMenu.getName(), responseDtoList.get(0).getName());
 
     }
 
@@ -132,6 +159,15 @@ public class MenuServiceTest {
                 "설명",
                 15000
         );
+
+        when(storesRepository.findById(mockStore.getId())).thenReturn(Optional.of(mockStore));
+        when(menuRepository.findMenuById(anyLong())).thenReturn(Optional.of(mockMenu));
+
+        MenuResponseDto responseDto = menuService.updateMenu(mockStore.getId(),
+                mockMenu.getId(), menuUpdateRequestDto, userDetails);
+
+        assertNotNull(responseDto);
+        assertEquals(mockMenu.getName(), responseDto.getName());
     }
 
 
@@ -139,7 +175,12 @@ public class MenuServiceTest {
     @DisplayName("deleteMenu 정상 작동")
     void deleteMenu() {
 
+        when(storesRepository.findById(mockStore.getId())).thenReturn(Optional.of(mockStore));
+        when(menuRepository.findMenuById(anyLong())).thenReturn(Optional.of(mockMenu));
 
+        menuService.deleteMenu(mockStore.getId(), mockMenu.getId(), userDetails);
+
+        assertTrue(mockMenu.getDeleted());
 
     }
 
