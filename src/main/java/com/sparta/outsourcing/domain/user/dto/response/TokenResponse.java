@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class JoinResponse {
-    private String token;
+public class TokenResponse {
+    private String accessToken;
+    private String refreshToken;
 }

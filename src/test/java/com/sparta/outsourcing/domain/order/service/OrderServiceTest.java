@@ -60,7 +60,7 @@ public class OrderServiceTest {
                 .build();
 
         // 가게 생성 및 ID 설정
-        mockStore = new Stores("Test Store", 1, "Category", "Address", "010-1234-5678", "Content", "picture.jpg", 2000, "09:00~22:00", "SUNDAY", mockUser);
+        mockStore = new Stores("Test Store", 1, "Category", "Address", "010-1234-5678", "Content", "picture.jpg", 2000, "09:00~22:00", "SUNDAY", mockUser, 1000);
         ReflectionTestUtils.setField(mockStore, "id", 1L); // 가게 ID를 수동으로 설정
 
         // 메뉴 생성 및 ID 설정
