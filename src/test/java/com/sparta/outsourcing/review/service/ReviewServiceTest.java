@@ -1,6 +1,7 @@
 package com.sparta.outsourcing.review.service;
 
 import com.sparta.outsourcing.domain.order.entity.Order;
+import com.sparta.outsourcing.domain.order.repository.OrderRepository;
 import com.sparta.outsourcing.domain.review.dto.CustomerReviewRequestDto;
 import com.sparta.outsourcing.domain.review.dto.CustomerReviewResponseDto;
 import com.sparta.outsourcing.domain.review.dto.OwnerReviewRequestDto;
@@ -12,10 +13,10 @@ import com.sparta.outsourcing.domain.review.repository.OwnerReviewRepository;
 import com.sparta.outsourcing.domain.review.service.ReviewService;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
-import com.sparta.outsourcing.domain.user.entity.Grade;
 import com.sparta.outsourcing.domain.user.entity.Role;
-import com.sparta.outsourcing.domain.user.entity.Status;
 import com.sparta.outsourcing.domain.user.entity.User;
+import com.sparta.outsourcing.exception.BadRequestException;
+import com.sparta.outsourcing.review.TestUtil;
 import com.sparta.outsourcing.s3.ImageManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,15 +26,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
 
 @ExtendWith(MockitoExtension.class)
 public class ReviewServiceTest {
@@ -45,7 +42,13 @@ public class ReviewServiceTest {
     private OwnerReviewRepository ownerReviewRepository;
 
     @Mock
+    private OrderRepository orderRepository;
+
+    @Mock
     private ImageManager imageManager;
+
+    @Mock
+    private CustomUserDetails customUserDetails;
 
     @InjectMocks
     private ReviewService reviewService;
@@ -53,11 +56,11 @@ public class ReviewServiceTest {
     @Test
     void addReview_Success() {
         // given
+        Long orderId = 1L;
         CustomerReviewRequestDto requestDto = new CustomerReviewRequestDto();
         User user = TestUtil.createMockUser();
         Stores store = TestUtil.createMockStores(user);
         Order order = TestUtil.createMockOrder(user, store);
-        order.setId(1L);
         requestDto.setOrder(order);
         requestDto.setUser(user);
         requestDto.setStore(store);
@@ -75,12 +78,40 @@ public class ReviewServiceTest {
         when(customerReviewRepository.save(any(CustomerReview.class))).thenReturn(savedReview);
 
         // when
-        CustomerReviewResponseDto responseDto = reviewService.addReview(requestDto);
+        CustomerReviewResponseDto responseDto = reviewService.addReview(orderId, requestDto);
 
         // then
         assertNotNull(responseDto);
         verify(customerReviewRepository).save(any(CustomerReview.class));
         verify(imageManager).upload(mockFile);
+    }
+
+    @Test
+    void addReview_OrderNotFound() {
+        // given
+        Long orderId = 1L;
+        CustomerReviewRequestDto requestDto = new CustomerReviewRequestDto();
+
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+
+        // when / then
+        assertThrows(BadRequestException.class, () -> reviewService.addReview(orderId, requestDto));
+    }
+
+    @Test
+    void addReview_AlreadyExists() {
+        // given
+        Long orderId = 1L;
+        CustomerReviewRequestDto requestDto = new CustomerReviewRequestDto();
+        User user = TestUtil.createMockUser();
+        Stores store = TestUtil.createMockStores(user);
+        Order order = TestUtil.createMockOrder(user, store);
+
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        when(customerReviewRepository.findByOrderId(orderId)).thenReturn(Optional.of(new CustomerReview()));
+
+        // when / then
+        assertThrows(BadRequestException.class, () -> reviewService.addReview(orderId, requestDto));
     }
 
     /*@Test
@@ -111,7 +142,6 @@ public class ReviewServiceTest {
         User user = TestUtil.createMockUser();
         Stores store = TestUtil.createMockStores(user);
         Order order = TestUtil.createMockOrder(user, store);
-        order.setId(1L);
 
 
         // 가짜 이미지 파일 생성
@@ -136,6 +166,22 @@ public class ReviewServiceTest {
     }
 
     @Test
+    void updateReview_EmailMismatch() {
+        // given
+        Long reviewId = 1L;
+        CustomerReviewRequestDto requestDto = new CustomerReviewRequestDto();
+        CustomerReview existingReview = new CustomerReview();
+        existingReview.setId(1L);
+        existingReview.setUser(TestUtil.createMockUser());
+
+        when(customerReviewRepository.findById(reviewId)).thenReturn(Optional.of(existingReview));
+        when(customUserDetails.getEmail()).thenReturn("wrong-email@example.com");
+
+        // when / then
+        assertThrows(BadRequestException.class, () -> reviewService.updateReview(customUserDetails, reviewId, requestDto));
+    }
+
+    @Test
     void deleteReview_Success() {
         // given
         Long reviewId = 1L;
@@ -146,7 +192,6 @@ public class ReviewServiceTest {
         User user = TestUtil.createMockUser();
         Stores store = TestUtil.createMockStores(user);
         Order order = TestUtil.createMockOrder(user, store);
-        order.setId(1L);
 
         review.setUser(user);
         review.setStore(store);
@@ -160,6 +205,21 @@ public class ReviewServiceTest {
         // then
         assertEquals("Review deleted", result);
         verify(customerReviewRepository).findById(reviewId);
+    }
+
+    @Test
+    void deleteReview_EmailMismatch() {
+        // given
+        Long reviewId = 1L;
+        CustomerReview existingReview = new CustomerReview();
+        existingReview.setId(1L);
+        existingReview.setUser(TestUtil.createMockUser());
+
+        when(customerReviewRepository.findById(reviewId)).thenReturn(Optional.of(existingReview));
+        when(customUserDetails.getEmail()).thenReturn("wrong-email@example.com");
+
+        // when / then
+        assertThrows(BadRequestException.class, () -> reviewService.deleteReview(customUserDetails, reviewId));
     }
 
 
@@ -209,7 +269,6 @@ public class ReviewServiceTest {
         User user = TestUtil.createMockUser();
         Stores store = TestUtil.createMockStores(user);
         Order order = TestUtil.createMockOrder(user, store);
-        order.setId(1L);
 
         OwnerReviewRequestDto requestDto = new OwnerReviewRequestDto();
         CustomerReview customerReview = new CustomerReview();
@@ -245,7 +304,6 @@ public class ReviewServiceTest {
         User user = TestUtil.createMockUser();
         Stores store = TestUtil.createMockStores(user);
         Order order = TestUtil.createMockOrder(user, store);
-        order.setId(1L);
 
         OwnerReview ownerReview = new OwnerReview();
         ownerReview.setUser(user);
