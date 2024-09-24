@@ -86,4 +86,26 @@ class StoresControllerTest {
         verify(storesService, times(1)).getStore(storeId);
     }
 
+    @Test
+    void 가게_검색_Success() {
+        // given
+        String keyword = "마라";
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        List<StoresSimpleResponseDto> storeList = List.of(
+            new StoresSimpleResponseDto("마라탕", "Test Store 1", 500),
+            new StoresSimpleResponseDto("파스타", "Test Store 2", 1000)
+        );
+        Page<StoresSimpleResponseDto> page = new PageImpl<>(storeList);
+
+        when(storesService.searchStores(keyword, 1, 10)).thenReturn(page);
+
+        // when
+        ResponseEntity<Page<StoresSimpleResponseDto>> response = storesController.searchStores(keyword, 1, 10);
+
+        // then
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, response.getBody().getTotalElements());
+        verify(storesService, times(1)).searchStores(keyword, 1, 10);
+    }
+
 }
