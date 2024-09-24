@@ -127,4 +127,35 @@ class StoresControllerTest {
         verify(storesService, times(1)).deleteStore(storeId);
     }
 
+    @Test
+    void 가게_생성_Success() {
+        // given
+        StoreCreatedRequestDto requestDto = new StoreCreatedRequestDto(
+            "Test Store",
+            1,
+            "Category",
+            "Address",
+            "010-1234-5678",
+            "Contents",
+            "picture.jpg",
+            1000,
+            "09:00~22:00",
+            "SUNDAY",
+            5000);
+
+        StoreResponseDto responseDto = new StoreResponseDto(
+            "가게가 성공적으로 생성되었습니다.", "Test Store", 200);
+
+        when(storesService.createStore(any(StoreCreatedRequestDto.class), any(CustomUserDetails.class)))
+            .thenReturn(responseDto);
+
+        // when
+        ResponseEntity<StoreResponseDto> response = storesController.createStore(requestDto, userDetails);
+
+        // then
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Test Store", response.getBody().getName());
+        verify(storesService, times(1)).createStore(any(StoreCreatedRequestDto.class), any(CustomUserDetails.class));
+    }
+
 }
