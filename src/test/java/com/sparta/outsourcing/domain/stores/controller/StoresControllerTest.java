@@ -158,4 +158,26 @@ class StoresControllerTest {
         verify(storesService, times(1)).createStore(any(StoreCreatedRequestDto.class), any(CustomUserDetails.class));
     }
 
+    @Test
+    void 가게_수정_Success() {
+        // given
+        long storeId = 1L;
+        StoreUpdateRequestDto updateRequestDto = new StoreUpdateRequestDto(
+            "Updated Store", 2, "Updated Category", "Updated Address", "", "01012345678",
+            "Updated Contents", 2000, 3000, "10:00~22:00", "SATURDAY");
+
+        StoreResponseDto responseDto = new StoreResponseDto("Store updated sucessfully",
+            "Updated Store",
+            200);
+
+        when(storesService.updateStore(storeId, updateRequestDto)).thenReturn(responseDto);
+
+        // when
+        StoreResponseDto response = storesController.updateStore(storeId, updateRequestDto);
+
+        // then
+        assertEquals("Updated Store", response.getName());
+        verify(storesService, times(1)).updateStore(storeId, updateRequestDto);
+    }
+
 }
