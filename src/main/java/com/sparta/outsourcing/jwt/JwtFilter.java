@@ -2,6 +2,7 @@ package com.sparta.outsourcing.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
@@ -37,9 +39,32 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = jwtUtil.substringToken(tokenValue);
 
+        // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
+        try {
+            jwtUtil.isExpired(token);
+        } catch (ExpiredJwtException e) {
+
+            PrintWriter writer = response.getWriter();
+            writer.print("access token expired");
+
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
         if (!jwtUtil.validateToken(token)) {
             log.info("TOKEN_INVALID");
             filterChain.doFilter(request, response);
+            return;
+        }
+
+        String category = jwtUtil.getCategory(token);
+
+        if (!category.equals("access")) {
+
+            PrintWriter writer = response.getWriter();
+            writer.print("invalid access token");
+
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
@@ -51,38 +76,4 @@ public class JwtFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-//        String path = request.getRequestURI();
-//        return path.equals("/login") ||
-//                path.equals("/") ||
-//                path.equals("/join") ||
-//                path.startsWith("/stores") ||
-//                path.startsWith("/reviews") ||
-//                path.startsWith("/orders") ||
-//                path.startsWith("/users/") && !path.equals("/users/me");
-//    }
-
-//    private void setErrorResponse(
-//            HttpServletResponse response,
-//            ErrorCode errorCode
-//    ) {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        response.setStatus(errorCode.getHttpStatus().value());
-//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//        response.setCharacterEncoding("UTF-8");
-//        ErrorResponse errorResponse = new ErrorResponse(errorCode.getCode(), errorCode.getMessage());
-//        try {
-//            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    @Data
-//    public static class ErrorResponse {
-//        private final Integer code;
-//        private final String message;
-//    }
 }
