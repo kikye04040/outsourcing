@@ -95,9 +95,7 @@ public class MenuServiceTest {
     @Test
     @DisplayName("createMenu 정상 등록")
     void createMenu() {
-
         // given
-
         MenuCreateRequestDto menuCreateRequestDto = new MenuCreateRequestDto(
                 "이미지 주소",
                 "이름",
@@ -106,17 +104,7 @@ public class MenuServiceTest {
         );
 
         when(storesRepository.findById(mockStore.getId())).thenReturn(Optional.of(mockStore));
-
-        Menu mockMenu = new Menu(
-                menuCreateRequestDto.getMenuPictureUrl(),
-                menuCreateRequestDto.getName(),
-                menuCreateRequestDto.getDescription(),
-                menuCreateRequestDto.getPrice(),
-                mockStore
-        );
-
-        when(storesRepository.findById(anyLong())).thenReturn(Optional.of(mockStore));
-        when(menuRepository.save(any())).thenReturn(mockMenu);
+        when(menuRepository.save(any(Menu.class))).thenReturn(mockMenu);
 
         // when
         MenuResponseDto responseDto = menuService.createMenu(mockStore.getId(), menuCreateRequestDto, userDetails);
@@ -127,7 +115,6 @@ public class MenuServiceTest {
         assertEquals(mockMenu.getDescription(), responseDto.getDescription());
         assertEquals(mockMenu.getPrice(), responseDto.getPrice());
         assertEquals(mockMenu.getMenuPictureUrl(), responseDto.getMenuPictureUrl());
-
     }
 
 
