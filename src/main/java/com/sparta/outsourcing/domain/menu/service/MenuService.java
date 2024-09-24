@@ -104,6 +104,8 @@ public class MenuService {
         // 메뉴 존재 확인
         Menu menu = findMenuById(menuId);
 
+        storeMenuMatch(storeId,menuId);
+
         menu.updateMenu(menuUpdateRequest.getMenuPictureUrl(), menuUpdateRequest.getName(), menuUpdateRequest.getDescription(), menuUpdateRequest.getPrice());
 
         return new MenuResponseDto(
@@ -129,7 +131,7 @@ public class MenuService {
         // 메뉴 존재 확인
         Menu menu = findMenuById(menuId);
 
-
+        storeMenuMatch(storeId,menuId);
 
         menu.deleteMenu();
 
@@ -156,6 +158,15 @@ public class MenuService {
     public void storeUserMatch(Stores store, CustomUserDetails userDetails) {
         if(!store.getUser().getEmail().equals(userDetails.getEmail())){
             throw new IllegalArgumentException("해당 가게의 주인이 아닙니다");
+        }
+    }
+
+    // 가게의 메뉴가 맞는지 확인
+    public void storeMenuMatch(Long storeId, Long menuId) {
+        Menu menu = findMenuById(menuId);
+
+        if (!storeId.equals(menu.getStore().getId())){
+            throw new IllegalArgumentException("해당 가게의 메뉴가 아닙니다");
         }
     }
 
