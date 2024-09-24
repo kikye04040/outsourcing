@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 public class CustomerReviewRequestDto {
 
-    private Long reviewId;
     private int rating;
     private String contents;
     private MultipartFile reviewPicture;

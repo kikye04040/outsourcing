@@ -11,11 +11,14 @@ import com.sparta.outsourcing.domain.review.dto.CustomerReviewRequestDto;
 import com.sparta.outsourcing.domain.review.dto.CustomerReviewResponseDto;
 import com.sparta.outsourcing.domain.review.repository.OwnerReviewRepository;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
+import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import com.sparta.outsourcing.domain.user.entity.User;
+import com.sparta.outsourcing.domain.user.repository.UserRepository;
 import com.sparta.outsourcing.exception.BadRequestException;
 import com.sparta.outsourcing.s3.ImageManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,12 +29,16 @@ public class ReviewService {
     private final OwnerReviewRepository ownerReviewRepository;
     private final ImageManager imageManager;
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final StoresRepository storesRepository;
 
-    public ReviewService(CustomerReviewRepository customerReviewRepository, OwnerReviewRepository ownerReviewRepository, ImageManager imageManager, OrderRepository orderRepository) {
+    public ReviewService(CustomerReviewRepository customerReviewRepository, OwnerReviewRepository ownerReviewRepository, ImageManager imageManager, OrderRepository orderRepository, UserRepository userRepository, StoresRepository storesRepository) {
         this.customerReviewRepository = customerReviewRepository;
         this.ownerReviewRepository = ownerReviewRepository;
         this.imageManager = imageManager;
         this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
+        this.storesRepository = storesRepository;
     }
 
 
@@ -47,12 +54,12 @@ public class ReviewService {
 
         // requestDTO에 이미지가 존재하는지
         if(!customerReviewRequestDto.getReviewPicture().isEmpty()) {
-            String imageurl = imageManager.upload(customerReviewRequestDto.getReviewPicture());
-            customerReviewRequestDto.setReviewPictureUrl(imageurl);
+            String imageUrl = imageManager.upload(customerReviewRequestDto.getReviewPicture());
+            customerReviewRequestDto.setReviewPictureUrl(imageUrl);
         }
 
-        User user = order.getUser();
-        Stores store = order.getStore();
+        User user = userRepository.findById(order.getUser().getId()).orElseThrow();
+        Stores store = storesRepository.findById(order.getStore().getId()).orElseThrow(() -> new BadRequestException("Store not found"));
 
         customerReviewRequestDto.setUser(user);
         customerReviewRequestDto.setStore(store);
@@ -75,6 +82,7 @@ public class ReviewService {
 
 
     // 리뷰 수정
+    @Transactional
     public CustomerReviewResponseDto updateReview(CustomUserDetails customUserDetails, Long reviewId, CustomerReviewRequestDto customerReviewRequestDto) {
 
         CustomerReview customerReview = customerReviewRepository.findById(reviewId).orElseThrow(() -> new BadRequestException("Review not found"));
@@ -97,6 +105,7 @@ public class ReviewService {
 
 
     // 리뷰 삭제
+    @Transactional
     public String deleteReview(CustomUserDetails customUserDetails, Long reviewId) {
         CustomerReview customerReview = customerReviewRepository.findById(reviewId).orElseThrow(() -> new BadRequestException("Review not found"));
 
@@ -126,6 +135,7 @@ public class ReviewService {
     }
 
     // 사장 리뷰 수정
+    @Transactional
     public OwnerReviewResponseDto updateSubReview(CustomUserDetails customUserDetails, Long reviewId, OwnerReviewRequestDto ownerReviewRequestDto) {
 
         CustomerReview customerReview = customerReviewRepository.findById(reviewId).orElseThrow(() -> new BadRequestException("Customer Review not found"));
@@ -143,6 +153,7 @@ public class ReviewService {
     }
 
     // 사장 리뷰 삭제
+    @Transactional
     public String deleteSubReview(CustomUserDetails customUserDetails, Long reviewId) {
 
         OwnerReview ownerReview = ownerReviewRepository.findById(reviewId).orElseThrow(() -> new BadRequestException("Customer Review not found"));

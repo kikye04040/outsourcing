@@ -56,7 +56,7 @@ public class ReviewControllerTest {
         requestDto.setContents("Great product!");
         requestDto.setRating(5);
 
-        CustomerReviewResponseDto responseDto = new CustomerReviewResponseDto();
+        CustomerReviewResponseDto responseDto = new CustomerReviewResponseDto(new CustomerReview());
         responseDto.setId(1L);
         responseDto.setContents("Great product!");
         responseDto.setRating(5);
@@ -81,7 +81,7 @@ public class ReviewControllerTest {
         Long storeId = 1L;
         List<CustomerReviewResponseDto> reviews = List.of(
                 new CustomerReviewResponseDto(new CustomerReview()),
-                new CustomerReviewResponseDto(new CustomerReview().setContents())
+                new CustomerReviewResponseDto(new CustomerReview())
         );
 
         when(reviewService.getReviews(any(Long.class), anyInt(), anyInt())).thenReturn(reviews);
@@ -107,7 +107,7 @@ public class ReviewControllerTest {
         requestDto.setContents("Updated review content");
         requestDto.setRating(4);
 
-        CustomerReviewResponseDto responseDto = new CustomerReviewResponseDto();
+        CustomerReviewResponseDto responseDto = new CustomerReviewResponseDto(new CustomerReview());
         responseDto.setId(1L);
         responseDto.setContents("Updated review content");
         responseDto.setRating(4);

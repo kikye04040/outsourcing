@@ -7,9 +7,11 @@ import com.sparta.outsourcing.domain.review.dto.CustomerReviewResponseDto;
 import com.sparta.outsourcing.domain.review.service.ReviewService;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,9 +22,11 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     // 리뷰 작성
-    @PostMapping("/orders/{orderId}/reviews")
+    @PostMapping(value = "/orders/{orderId}/reviews", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<?> addReview(@PathVariable Long orderId,
-                                       @RequestBody CustomerReviewRequestDto customerReviewRequestDto) {
+                                       @RequestPart(name = "dto") CustomerReviewRequestDto customerReviewRequestDto,
+                                       @RequestPart(name = "image", required = false) MultipartFile reviewImage) {
+        customerReviewRequestDto.setReviewPicture(reviewImage);
         CustomerReviewResponseDto customerReviewResponseDto = reviewService.addReview(orderId, customerReviewRequestDto);
 
         return ResponseEntity.ok(customerReviewResponseDto);
@@ -45,7 +49,7 @@ public class ReviewController {
     @PutMapping("/stores/{storeId}/reviews")
     public ResponseEntity<?> updateReview(@RequestParam(value = "reviewId") Long reviewId,
                                           @AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                          @RequestBody CustomerReviewRequestDto customerReviewRequestDto) {
+                                          @RequestPart CustomerReviewRequestDto customerReviewRequestDto) {
 
         CustomerReviewResponseDto customerReviewResponseDto = reviewService.updateReview(customUserDetails, reviewId, customerReviewRequestDto);
 

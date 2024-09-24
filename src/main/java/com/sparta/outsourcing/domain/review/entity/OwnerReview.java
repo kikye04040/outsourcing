@@ -26,10 +26,10 @@ public class OwnerReview extends Timestamped {
     @Column(nullable = false)
     private String contents;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime modifiedAt;
 
     @Enumerated(EnumType.STRING)  // Enum을 문자열로 저장
