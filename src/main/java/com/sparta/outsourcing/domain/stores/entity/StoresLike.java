@@ -20,4 +20,9 @@ public class StoresLike {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Stores stores;
+
+    public StoresLike(User user, Stores store) {
+        this.user = user;
+        this.stores = store;
+    }
 }
