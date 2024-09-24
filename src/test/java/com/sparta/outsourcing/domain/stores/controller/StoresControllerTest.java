@@ -67,4 +67,23 @@ class StoresControllerTest {
         verify(storesService, times(1)).getStores(anyInt(), anyInt());
     }
 
+    @Test
+    void 특정_가게_상세_조회_Success() {
+        // given
+        Long storeId = 1L;
+        StoreDetailResponseDto storeDetailResponseDto = new StoreDetailResponseDto(
+            "파스타", 1, "Category", "Address", "", "01012345678", "안녕하세요.", 1000,
+            3000, "9to9", "SUNDAY");
+
+        when(storesService.getStore(storeId)).thenReturn(storeDetailResponseDto);
+
+        // when
+        ResponseEntity<StoreDetailResponseDto> response = storesController.getStore(storeId);
+
+        // then
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("파스타", response.getBody().getName());
+        verify(storesService, times(1)).getStore(storeId);
+    }
+
 }
