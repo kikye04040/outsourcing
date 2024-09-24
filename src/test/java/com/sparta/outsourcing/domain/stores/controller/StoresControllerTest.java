@@ -108,4 +108,23 @@ class StoresControllerTest {
         verify(storesService, times(1)).searchStores(keyword, 1, 10);
     }
 
+    @Test
+    void 가게_삭제_Success() {
+        // given
+        long storeId = 1L;
+        StoreResponseDto responseDto = new StoreResponseDto(
+            "Store deleted sucessfully",
+            "",
+            200);
+
+        when(storesService.deleteStore(storeId)).thenReturn(responseDto);
+
+        // when
+        StoreResponseDto response = storesController.deleteStore(storeId);
+
+        // then
+        assertEquals("Store deleted sucessfully", response.getMessage());
+        verify(storesService, times(1)).deleteStore(storeId);
+    }
+
 }
