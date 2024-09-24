@@ -4,10 +4,7 @@ import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import com.sparta.outsourcing.domain.user.dto.TokenDto;
 import com.sparta.outsourcing.domain.user.dto.request.JoinRequest;
 import com.sparta.outsourcing.domain.user.dto.response.TokenResponse;
-import com.sparta.outsourcing.domain.user.entity.Grade;
-import com.sparta.outsourcing.domain.user.entity.Role;
-import com.sparta.outsourcing.domain.user.entity.Status;
-import com.sparta.outsourcing.domain.user.entity.User;
+import com.sparta.outsourcing.domain.user.entity.*;
 import com.sparta.outsourcing.domain.user.exception.DuplicateUserException;
 import com.sparta.outsourcing.domain.user.exception.InvalidTokenException;
 import com.sparta.outsourcing.domain.user.exception.WithdrawnUserException;
@@ -82,12 +79,11 @@ public class AuthService {
                 .role(role)
                 .build();
 
-        String refreshTokenBearer = jwtUtil.createToken("refresh", customUserDetails, role.name(), 86400000L);
-        String refreshToken = jwtUtil.substringToken(refreshTokenBearer);
-        String token = jwtUtil.createToken("access", customUserDetails, role.name(), 600000L);
+        String refreshToken = jwtUtil.createToken(TokenType.REFRESH, customUserDetails);
+        String accessToken = jwtUtil.createToken(TokenType.ACCESS, customUserDetails);
 
         return TokenResponse.builder()
-                .accessToken(token)
+                .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
     }
@@ -112,7 +108,6 @@ public class AuthService {
 
         CustomUserDetails customUserDetails = jwtUtil.getCustomUserDetailsFromToken(refreshToken);
         String email = customUserDetails.getEmail();
-        String role = customUserDetails.getRole().name();
 
         String storedRefreshToken = refreshTokenService.getRefreshToken(email);
 
@@ -120,10 +115,9 @@ public class AuthService {
             throw new InvalidTokenException();
         }
 
-        String newRefreshTokenBearer = jwtUtil.createToken("refresh", customUserDetails, role, 86400000L);
-        String newAccessToken = jwtUtil.createToken("access", customUserDetails, role, 600000L);
+        String newRefreshToken = jwtUtil.createToken(TokenType.REFRESH, customUserDetails);
+        String newAccessToken = jwtUtil.createToken(TokenType.ACCESS, customUserDetails);
 
-        String newRefreshToken = jwtUtil.substringToken(newRefreshTokenBearer);
 
         refreshTokenService.deleteRefreshToken(email);
         refreshTokenService.saveRefreshToken(newRefreshToken, email, 24, TimeUnit.HOURS);
