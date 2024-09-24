@@ -1,9 +1,10 @@
 package com.sparta.outsourcing.domain.menu.dto.request;
 
-import com.sparta.outsourcing.domain.stores.entity.Stores;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class MenuUpdateRequestDto {
 
     private String menuPictureUrl;
