@@ -7,4 +7,8 @@ public class SearchRequestDto {
 
     private String keyword;
 
+    public SearchRequestDto(String keyword) {
+        this.keyword = keyword;
+    }
+
 }
