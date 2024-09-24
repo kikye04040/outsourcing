@@ -119,7 +119,6 @@ public class MenuService {
     @Transactional
     @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public void deleteMenu(Long storeId, Long menuId,
-                           MenuDeleteRequestDto menuDeleteRequest,
                            CustomUserDetails userDetails) {
 
         // 가게 존재 확인
