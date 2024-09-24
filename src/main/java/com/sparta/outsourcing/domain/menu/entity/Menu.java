@@ -53,6 +53,10 @@ public class Menu {
             throw new IllegalArgumentException("가격 음수 등록 불가");
         }
 
+        if (this.deleted) {
+            throw new IllegalStateException("이미 삭제된 메뉴입니다");
+        }
+
         this.menuPictureUrl = menuPictureUrl;
         this.name = name;
         this.description = description;
