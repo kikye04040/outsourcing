@@ -1,4 +1,4 @@
-package com.sparta.outsourcing.review.controller;
+package com.sparta.outsourcing.domain.review.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.outsourcing.domain.review.controller.ReviewController;

@@ -64,9 +64,9 @@ public class OrderServiceTest {
         ReflectionTestUtils.setField(mockStore, "id", 1L); // 가게 ID를 수동으로 설정
 
         // 메뉴 생성 및 ID 설정
-        mockMenu1 = new Menu("Menu1", "Desc1", 5000, mockStore);
+        // mockMenu1 = new Menu("Menu1", "Desc1", 5000, mockStore);
         ReflectionTestUtils.setField(mockMenu1, "id", 1L); // 메뉴 1 ID 설정
-        mockMenu2 = new Menu("Menu2", "Desc2", 6000, mockStore);
+        // mockMenu2 = new Menu("Menu2", "Desc2", 6000, mockStore);
         ReflectionTestUtils.setField(mockMenu2, "id", 2L); // 메뉴 2 ID 설정
 
         userDetails = mock(CustomUserDetails.class);
