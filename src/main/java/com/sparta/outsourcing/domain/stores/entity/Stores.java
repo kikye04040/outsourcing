@@ -77,6 +77,7 @@ public class Stores {
     }
 
 
+
     public void update(String name, int type, String category, String address,
                        String storePictureUrl, String phone, String contents,
                        int deliveryTip, String operationHours, String closedDays, int minDeliveryPrice) {
