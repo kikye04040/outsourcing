@@ -28,9 +28,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MenuServiceTest {
@@ -68,7 +66,8 @@ public class MenuServiceTest {
                 "이미지 url",
                 3000,
                 "영업 시간",
-                "휴일", mockUser,
+                "휴일",
+                mockUser,
                 10000);
 
         ReflectionTestUtils.setField(mockStore,
@@ -184,6 +183,22 @@ public class MenuServiceTest {
         menuService.deleteMenu(mockStore.getId(), menuId, userDetails);
 
         assertTrue(mockMenu.getDeleted());
+        verify(menuRepository, times(1)).findMenuById(menuId);
+        verify(menuRepository, times(1)).save(any(Menu.class));
+
+    }
+
+
+    @Test
+    @DisplayName("deleteMenu 메뉴 없음")
+    void deleteMenuNotFound() {
+        Long menuId = 1L;
+        when(storesRepository.findById(mockStore.getId())).thenReturn(Optional.empty());
+        when(menuRepository.findMenuById(menuId)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> menuService.deleteMenu(mockStore.getId(), menuId, userDetails));
+        assertEquals("해당 메뉴 없음", exception.getMessage());
 
     }
 
