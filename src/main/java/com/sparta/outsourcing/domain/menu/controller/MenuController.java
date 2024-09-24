@@ -1,7 +1,6 @@
 package com.sparta.outsourcing.domain.menu.controller;
 
 import com.sparta.outsourcing.domain.menu.dto.request.MenuCreateRequestDto;
-import com.sparta.outsourcing.domain.menu.dto.request.MenuDeleteRequestDto;
 import com.sparta.outsourcing.domain.menu.dto.request.MenuUpdateRequestDto;
 import com.sparta.outsourcing.domain.menu.dto.response.MenuResponseDto;
 import com.sparta.outsourcing.domain.menu.service.MenuService;
