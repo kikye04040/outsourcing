@@ -15,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.sparta.outsourcing.domain.user.entity.Role.ROLE_USER;
 
@@ -60,4 +62,29 @@ public class StoresLikeService {
             ) ;
         }
     }
+
+    // 사용자가 좋아요한 모든 가게 조회
+    public List<StoreResponseDto> getLikedStores(CustomUserDetails userDetails) {
+        User user = validateUser(userDetails);
+
+        // 사용자가 좋아요한 가게 리스트 조회
+        List<StoresLike> likedStores = storesLikeRepository.findAllByUser(user);
+
+        // StoresLike에서 Stores를 추출해 StoreResponseDto로 변환
+        return likedStores.stream()
+            .map(like -> new StoreResponseDto(
+                like.getStores().getName(),
+                user.getName(),
+                200
+            ))
+            .collect(Collectors.toList());
+    }
+
+    // 사용자 유효성 검증 메서드
+    private User validateUser(CustomUserDetails userDetails) {
+        return userRepository.findByEmail(userDetails.getEmail())
+            .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+    }
+
+
 }
