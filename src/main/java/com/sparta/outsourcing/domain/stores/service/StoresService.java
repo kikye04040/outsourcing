@@ -148,7 +148,7 @@ public class StoresService {
         storesRepository.save(stores);
 
         return new StoreResponseDto(
-            "Store updated sucessfully",
+            "Store deleted sucessfully",
             "",
             200
         );
