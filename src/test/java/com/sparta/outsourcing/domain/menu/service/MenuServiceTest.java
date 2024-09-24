@@ -32,6 +32,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class MenuServiceTest {
 
     @InjectMocks
@@ -153,18 +154,19 @@ public class MenuServiceTest {
     @DisplayName("updateMenu 정상 작동")
     void updateMenu() {
 
+        Long menuId = 1L;
         MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(
-                "이미지 주소",
-                "이름",
-                "설명",
-                15000
+                "수정 이미지 주소",
+                "수정 이름",
+                "수정 설명",
+                20000
         );
 
         when(storesRepository.findById(mockStore.getId())).thenReturn(Optional.of(mockStore));
-        when(menuRepository.findMenuById(anyLong())).thenReturn(Optional.of(mockMenu));
+        when(menuRepository.findMenuById(menuId)).thenReturn(Optional.of(mockMenu));
 
         MenuResponseDto responseDto = menuService.updateMenu(mockStore.getId(),
-                mockMenu.getId(), menuUpdateRequestDto, userDetails);
+                menuId, menuUpdateRequestDto, userDetails);
 
         assertNotNull(responseDto);
         assertEquals(mockMenu.getName(), responseDto.getName());
@@ -175,10 +177,11 @@ public class MenuServiceTest {
     @DisplayName("deleteMenu 정상 작동")
     void deleteMenu() {
 
+        Long menuId = 1L;
         when(storesRepository.findById(mockStore.getId())).thenReturn(Optional.of(mockStore));
-        when(menuRepository.findMenuById(anyLong())).thenReturn(Optional.of(mockMenu));
+        when(menuRepository.findMenuById(menuId)).thenReturn(Optional.of(mockMenu));
 
-        menuService.deleteMenu(mockStore.getId(), mockMenu.getId(), userDetails);
+        menuService.deleteMenu(mockStore.getId(), menuId, userDetails);
 
         assertTrue(mockMenu.getDeleted());
 
