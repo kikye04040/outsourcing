@@ -3,7 +3,9 @@ package com.sparta.outsourcing.domain.user.repository;
 import com.sparta.outsourcing.domain.user.entity.Status;
 import com.sparta.outsourcing.domain.user.entity.User;
 import com.sparta.outsourcing.domain.user.exception.UserNotFoundException;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
@@ -21,4 +23,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     default User findByIdOrElseThrow(Long userId) {
         return findById(userId).orElseThrow(UserNotFoundException::new);
     }
+
+    @Query("SELECT u FROM User u WHERE u.email = :email")
+    Optional<User> findByEmailIncludingWithdrawn(@Param("email") String email);
+
+
 }
