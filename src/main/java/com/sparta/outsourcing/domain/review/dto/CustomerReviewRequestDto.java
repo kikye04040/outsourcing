@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class CustomerReviewRequestDto {
 
     private Long reviewId;
-    private Long orderId;
     private int rating;
     private String contents;
     private MultipartFile reviewPicture;

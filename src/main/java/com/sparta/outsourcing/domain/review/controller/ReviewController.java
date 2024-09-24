@@ -20,9 +20,10 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     // 리뷰 작성
-    @PostMapping("/reviews")
-    public ResponseEntity<?> addReview(@RequestBody CustomerReviewRequestDto customerReviewRequestDto) {
-        CustomerReviewResponseDto customerReviewResponseDto = reviewService.addReview(customerReviewRequestDto);
+    @PostMapping("/orders/{orderId}/reviews")
+    public ResponseEntity<?> addReview(@PathVariable Long orderId,
+                                       @RequestBody CustomerReviewRequestDto customerReviewRequestDto) {
+        CustomerReviewResponseDto customerReviewResponseDto = reviewService.addReview(orderId, customerReviewRequestDto);
 
         return ResponseEntity.ok(customerReviewResponseDto);
     }
