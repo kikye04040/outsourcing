@@ -15,9 +15,10 @@ public class StoreCreatedRequestDto {
     private int deliveryTip;
     private String operationHours;
     private String closedDays;
+    private int minDeliveryPrice;
 
     public StoreCreatedRequestDto(String name, int type, String category, String address, String phone, String contents, String storePictureUrl, int deliveryTip,
-                                  String operationHours, String closedDays) {
+                                  String operationHours, String closedDays, int minDeliveryPrice) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -28,5 +29,6 @@ public class StoreCreatedRequestDto {
         this.deliveryTip = deliveryTip;
         this.operationHours = operationHours;
         this.closedDays = closedDays;
+        this.minDeliveryPrice = minDeliveryPrice;
     }
 }
