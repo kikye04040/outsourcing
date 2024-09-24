@@ -11,6 +11,9 @@ import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import com.sparta.outsourcing.domain.user.entity.User;
 import com.sparta.outsourcing.domain.user.repository.UserRepository;
+import com.sparta.outsourcing.exception.BadRequestException;
+import com.sparta.outsourcing.exception.ForbiddenException;
+import com.sparta.outsourcing.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,13 +37,13 @@ public class OrderService {
     public Order createOrder(OrderRequestDto requestDto, CustomUserDetails userDetails) {
         // 사용자 역할 확인
         if (!userDetails.getRole().equals(ROLE_USER)) {
-            throw new IllegalArgumentException("사용자 계정으로만 주문이 가능합니다.");
+            throw new ForbiddenException("사용자 계정으로만 주문이 가능합니다.");
         }
 
         // 가게 찾기
         Long storeId = requestDto.getStoreId();
         Stores store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new NullPointerException("해당 가게를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException("해당 가게를 찾을 수 없습니다."));
 
         int totalPrice = 0;
         List<Menu> orderedMenus = new ArrayList<>();
@@ -48,7 +51,7 @@ public class OrderService {
         // 메뉴 ID 리스트 처리
         for (Long menuId : requestDto.getMenuIds()) {
             Menu menu = menuRepository.findById(menuId)
-                    .orElseThrow(() -> new NullPointerException("해당 메뉴를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new NotFoundException("해당 메뉴를 찾을 수 없습니다."));
             orderedMenus.add(menu);  // 메뉴 추가
             totalPrice += menu.getPrice();  // 총 가격 합산
             System.out.println("메뉴 추가: " + menu.getName());
@@ -56,17 +59,17 @@ public class OrderService {
 
         // 최소 주문 금액 체크
         if (totalPrice < store.getMinDeliveryPrice()) {
-            throw new IllegalArgumentException("최소 주문 금액을 넘지 않습니다.");
+            throw new BadRequestException("최소 주문 금액을 넘지 않습니다.");
         }
 
         // 가게 오픈/마감 시간 체크
         if (!store.isOpen()) {
-            throw new NullPointerException("영업 중인 가게가 아닙니다.");
+            throw new ForbiddenException("영업 중인 가게가 아닙니다.");
         }
 
         // 사용자 조회
         User user = userRepository.findByEmail(userDetails.getEmail())
-                .orElseThrow(() -> new NullPointerException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
         // 주문 생성 및 저장 (store, totalPrice, userDetails, 여러 메뉴를 포함)
         Order order = new Order(store, orderedMenus, user, totalPrice);
@@ -76,7 +79,7 @@ public class OrderService {
     @Transactional
     public void updateOrderStatus(Long orderId, OrderStatusEnum status) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NullPointerException("해당 주문을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException("해당 주문을 찾을 수 없습니다."));
 
         order.updateStatus(status);
     }

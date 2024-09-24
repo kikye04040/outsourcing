@@ -7,6 +7,8 @@ import com.sparta.outsourcing.domain.order.entity.Order;
 import com.sparta.outsourcing.domain.order.service.OrderService;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import com.sparta.outsourcing.domain.user.entity.Role;
+import com.sparta.outsourcing.exception.BadRequestException;
+import com.sparta.outsourcing.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
@@ -32,7 +34,7 @@ public class OrderController {
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         // 사용자 역할 확인을 먼저 수행
         if (!userDetails.getRole().equals(ROLE_USER)) {
-            throw new IllegalArgumentException("사용자 계정으로만 주문이 가능합니다.");
+            throw new BadRequestException("사용자 계정으로만 주문이 가능합니다.");
         }
 
         Order order = orderService.createOrder(requestDto, userDetails);
@@ -50,7 +52,7 @@ public class OrderController {
 
         // 사용자 역할 확인
         if (!userDetails.getRole().name().equals("ROLE_OWNER")) {
-            throw new IllegalArgumentException("인증된 사장님이 아닙니다.");
+            throw new ForbiddenException("인증된 사장님이 아닙니다.");
         }
 
         // 주문 상태 변경
