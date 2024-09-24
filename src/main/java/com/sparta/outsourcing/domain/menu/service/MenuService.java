@@ -153,7 +153,7 @@ public class MenuService {
 
     // 사용자가 가게의 주인인지 확인
     public void storeUserMatch(Stores store, CustomUserDetails userDetails) {
-        if(!store.getUser().getId().equals(userDetails.getEmail())){
+        if(!store.getUser().getEmail().equals(userDetails.getEmail())){
             throw new IllegalArgumentException("해당 가게의 주인이 아닙니다");
         }
     }
