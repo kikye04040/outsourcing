@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/stores")
 @RequiredArgsConstructor
@@ -20,5 +22,11 @@ public class StoresLikeController {
                                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
         StoreResponseDto responseDto = storesLikeService.StoreLike(storeId, userDetails);
         return ResponseEntity.ok(responseDto);
+    }
+
+    // 사용자가 좋아요한 가게 조회
+    @GetMapping("/likes")
+    public List<StoreResponseDto> getLikedStores(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return storesLikeService.getLikedStores(userDetails);
     }
 }

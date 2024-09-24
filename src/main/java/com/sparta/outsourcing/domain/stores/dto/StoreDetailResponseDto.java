@@ -1,6 +1,10 @@
 package com.sparta.outsourcing.domain.stores.dto;
 
+import com.sparta.outsourcing.domain.menu.dto.response.MenuResponseDto;
+import com.sparta.outsourcing.domain.menu.entity.Menu;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class StoreDetailResponseDto {
@@ -25,8 +29,9 @@ public class StoreDetailResponseDto {
     private String operationHours;
 
     private String closedDays;
+    private List<MenuResponseDto> menuList;
 
-    public StoreDetailResponseDto(String name, int type, String category, String address, String storePictureUrl, String phone, String contents, int minDeliveryPrice, int deliveryTip, String operationHours, String closedDays) {
+    public StoreDetailResponseDto(String name, int type, String category, String address, String storePictureUrl, String phone, String contents, int minDeliveryPrice, int deliveryTip, String operationHours, String closedDays, List<MenuResponseDto> menuList) {
         this.name = name;
         this.type = type;
         this.category = category;
@@ -38,5 +43,6 @@ public class StoreDetailResponseDto {
         this.deliveryTip = deliveryTip;
         this.operationHours = operationHours;
         this.closedDays = closedDays;
+        this.menuList = menuList;
     }
 }

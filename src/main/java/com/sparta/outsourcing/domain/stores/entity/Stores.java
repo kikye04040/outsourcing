@@ -1,5 +1,6 @@
 package com.sparta.outsourcing.domain.stores.entity;
 
+import com.sparta.outsourcing.domain.menu.entity.Menu;
 import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
 import com.sparta.outsourcing.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -10,6 +11,8 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -50,8 +53,8 @@ public class Stores {
 //    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
 //    private List<Review> reviews = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
-//    private List<Menu> Menu = new ArrayList<>();
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+    private List<Menu> menu = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
 //    private List<Order> Orders = new ArrayList<>();
