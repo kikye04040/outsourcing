@@ -31,20 +31,8 @@ public class MenuService {
                                       MenuCreateRequestDto menuCreateRequest ,
                                       CustomUserDetails userDetails) {
 
-        // 가게 존재 확인
         Stores store = findStoreById(storeId);
 
-//        // 유저가 OWNER 인지 확인
-//        if (!userDetails.getRole().equals(ROLE_OWNER)) {
-//            throw new IllegalArgumentException("오너 계정만 메뉴를 생성할 수 있습니다.");
-//        } // @PreAuthorize("hasAuthority('ROLE_OWNER')") 로 이미 검증 한 상태?
-
-//        // 사용자가 가게의 주인인지 확인
-//        if(!store.getUser().getId().equals(userDetails.getEmail())){
-//            throw new IllegalArgumentException("store user not match");
-//        }
-
-        // 사용자가 가게의 주인인지 확인
         storeUserMatch(store, userDetails);
 
         Menu menu = new Menu(
@@ -96,12 +84,10 @@ public class MenuService {
                                       MenuUpdateRequestDto menuUpdateRequest,
                                       CustomUserDetails userDetails) {
 
-        // 가게 존재 확인
         Stores store = findStoreById(storeId);
 
         storeUserMatch(store, userDetails);
 
-        // 메뉴 존재 확인
         Menu menu = findMenuById(menuId);
 
         storeMenuMatch(storeId,menuId);
@@ -123,12 +109,10 @@ public class MenuService {
     public void deleteMenu(Long storeId, Long menuId,
                            CustomUserDetails userDetails) {
 
-        // 가게 존재 확인
         Stores store = findStoreById(storeId);
 
         storeUserMatch(store, userDetails);
 
-        // 메뉴 존재 확인
         Menu menu = findMenuById(menuId);
 
         storeMenuMatch(storeId,menuId);
