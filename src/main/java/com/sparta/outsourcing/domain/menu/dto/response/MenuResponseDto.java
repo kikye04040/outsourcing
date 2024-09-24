@@ -1,10 +1,11 @@
 package com.sparta.outsourcing.domain.menu.dto.response;
 
-import com.sparta.outsourcing.domain.menu.entity.Menu;
 import lombok.Getter;
 
 @Getter
-public class MenuResponse {
+public class MenuResponseDto {
+
+    private String menuPictureUrl;
 
     private String name;
 
@@ -13,7 +14,8 @@ public class MenuResponse {
     private Integer price;
 
 
-    public MenuResponse(String name, String description, Integer price) {
+    public MenuResponseDto(String menuPictureUrl, String name, String description, Integer price) {
+        this.menuPictureUrl = menuPictureUrl;
         this.name = name;
         this.description = description;
         this.price = price;

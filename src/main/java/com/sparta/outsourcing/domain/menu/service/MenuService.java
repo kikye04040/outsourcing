@@ -1,15 +1,13 @@
 package com.sparta.outsourcing.domain.menu.service;
 
-import com.sparta.outsourcing.domain.menu.dto.request.MenuSaveRequest;
-import com.sparta.outsourcing.domain.menu.dto.request.MenuUpdateRequest;
-import com.sparta.outsourcing.domain.menu.dto.response.MenuResponse;
+import com.sparta.outsourcing.domain.menu.dto.request.MenuCreateRequestDto;
+import com.sparta.outsourcing.domain.menu.dto.request.MenuUpdateRequestDto;
+import com.sparta.outsourcing.domain.menu.dto.response.MenuResponseDto;
 import com.sparta.outsourcing.domain.menu.entity.Menu;
 import com.sparta.outsourcing.domain.menu.repository.MenuRepository;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
-import com.sparta.outsourcing.domain.user.entity.User;
-import com.sparta.outsourcing.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -17,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.sparta.outsourcing.domain.user.entity.Role.ROLE_OWNER;
 
 @Service
 @RequiredArgsConstructor
@@ -28,29 +24,28 @@ public class MenuService {
     private final StoresRepository storesRepository;
 
     // 메뉴 생성
+    @Transactional
     @PreAuthorize("hasAuthority('ROLE_OWNER')")
-    public MenuResponse saveMenu(MenuSaveRequest menuSaveRequest, CustomUserDetails userDetails) {
+    public MenuResponseDto createMenu(Long storeId,
+                                      MenuCreateRequestDto menuCreateRequest ,
+                                      CustomUserDetails userDetails) {
 
-        // 존재하는 가게인지 확인하는 부분 추가할 것
-        Stores store = storesRepository.findById(menuSaveRequest.getStoreId()).
-                orElseThrow(() -> new NullPointerException("해당 가게를 찾을 수 없습니다."));
+        Stores store = findStoreById(storeId);
 
-        // 사용자가 가게의 주인인지 확인하는 부분 추가할 것
-        // 유저가 OWNER 인지 확인
-        if (!userDetails.getRole().equals(ROLE_OWNER)) {
-            throw new IllegalArgumentException("오너 계정만 가게를 생성할 수 있습니다.");
-        }
+        storeUserMatch(store, userDetails);
 
         Menu menu = new Menu(
-                menuSaveRequest.getName(),
-                menuSaveRequest.getDescription(),
-                menuSaveRequest.getPrice(),
+                menuCreateRequest.getMenuPictureUrl(),
+                menuCreateRequest.getName(),
+                menuCreateRequest.getDescription(),
+                menuCreateRequest.getPrice(),
                 store
         );
 
         Menu savedMenu = menuRepository.save(menu);
 
-        return new MenuResponse(
+        return new MenuResponseDto(
+                savedMenu.getMenuPictureUrl(),
                 savedMenu.getName(),
                 savedMenu.getDescription(),
                 savedMenu.getPrice()
@@ -59,21 +54,17 @@ public class MenuService {
     }
 
     // 메뉴 조회
-    public List<MenuResponse> getMenus(Long storeId) {
+    public List<MenuResponseDto> getMenus(Long storeId) {
 
-        // 존재하는 가게인지 확인하는 부분 추가할 것
+        // 가게 id가 같은 메뉴 조회
+        List<Menu> menuList = menuRepository.findByStoreId(storeId);
 
-        // 이후 가게 Id 받아오는 것으로 고칠 것
-        List<Menu> menuList = menuRepository.findAll();
-
-        List<MenuResponse> menuResponseList = new ArrayList<>();
+        List<MenuResponseDto> menuResponseList = new ArrayList<>();
 
         for (Menu menu : menuList) {
 
-            // deleted 가 true 일 경우 조회되지 않도록 변경할 것
-            String menuName = menu.getDeleted() ? null : menu.getName();
-
-            MenuResponse menuResponse = new MenuResponse(
+            MenuResponseDto menuResponse = new MenuResponseDto(
+                    menu.getMenuPictureUrl(),
                     menu.getName(),
                     menu.getDescription(),
                     menu.getPrice()
@@ -85,16 +76,81 @@ public class MenuService {
 
     }
 
-//    // 메뉴 수정
-//    @Transactional
-//    public MenuResponse updateMenu(Long menuId, MenuUpdateRequest menuUpdateRequest) {
-//
-//        // 존재하는 가게인지 확인하는 부분 추가할 것
-//
-//
-//    }
+    // 메뉴 수정
+    @Transactional
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    public MenuResponseDto updateMenu(Long storeId, Long menuId,
+                                      MenuUpdateRequestDto menuUpdateRequest,
+                                      CustomUserDetails userDetails) {
+
+        Stores store = findStoreById(storeId);
+
+        storeUserMatch(store, userDetails);
+
+        Menu menu = findMenuById(menuId);
+
+        storeMenuMatch(storeId,menuId);
+
+        menu.updateMenu(menuUpdateRequest.getMenuPictureUrl(), menuUpdateRequest.getName(), menuUpdateRequest.getDescription(), menuUpdateRequest.getPrice());
+
+        return new MenuResponseDto(
+                menu.getMenuPictureUrl(),
+                menu.getName(),
+                menu.getDescription(),
+                menu.getPrice()
+        );
+
+    }
 
     // 메뉴 삭제
+    @Transactional
+    @PreAuthorize("hasAuthority('ROLE_OWNER')")
+    public void deleteMenu(Long storeId, Long menuId,
+                           CustomUserDetails userDetails) {
 
+        Stores store = findStoreById(storeId);
+
+        storeUserMatch(store, userDetails);
+
+        Menu menu = findMenuById(menuId);
+
+        storeMenuMatch(storeId,menuId);
+
+        menu.deleteMenu();
+
+    }
+
+
+    // Id 로 메뉴 찾고 존재 확인
+    public Menu findMenuById(Long menuId) {
+        Menu menu = menuRepository.findMenuById(menuId)
+                .orElseThrow(() -> new NullPointerException("해당 메뉴를 찾을 수 없습니다."));
+
+        return menu;
+    }
+
+    // Id로 가게 찾고 존재 확인
+    public Stores findStoreById(Long storeId) {
+        Stores store = storesRepository.findById(storeId)
+                .orElseThrow(() -> new NullPointerException("해당 가게를 찾을 수 없습니다."));
+
+        return store;
+    }
+
+    // 사용자가 가게의 주인인지 확인
+    public void storeUserMatch(Stores store, CustomUserDetails userDetails) {
+        if(!store.getUser().getEmail().equals(userDetails.getEmail())){
+            throw new IllegalArgumentException("해당 가게의 주인이 아닙니다");
+        }
+    }
+
+    // 가게의 메뉴가 맞는지 확인
+    public void storeMenuMatch(Long storeId, Long menuId) {
+        Menu menu = findMenuById(menuId);
+
+        if (!storeId.equals(menu.getStore().getId())){
+            throw new IllegalArgumentException("해당 가게의 메뉴가 아닙니다");
+        }
+    }
 
 }
