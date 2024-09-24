@@ -31,6 +31,14 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String tokenValue = jwtUtil.getTokenFromRequest(request);
 
+        // 카카오 로그인 로직
+        String requestURI = request.getRequestURI();
+        // 특정 경로는 필터를 적용하지 않음
+        if (requestURI.equals("/login") || requestURI.equals("/callback") || requestURI.equals("/favicon.ico")) {
+            filterChain.doFilter(request, response); // 다음 필터로 이동
+            return; // 필터 중단
+        }
+
         if (!StringUtils.hasText(tokenValue)) {
             log.info("TOKEN_NULL");
             filterChain.doFilter(request, response);

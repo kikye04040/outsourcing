@@ -1,5 +1,6 @@
 package com.sparta.outsourcing.jwt;
 
+import com.sparta.outsourcing.domain.kakao.dto.KakaoUserDetails;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import com.sparta.outsourcing.domain.user.entity.Role;
 import com.sparta.outsourcing.domain.user.entity.TokenType;
@@ -57,6 +58,24 @@ public class JwtUtil {
 
         return TokenType.ACCESS.equals(tokenType) ? BEARER_PREFIX + token : token;
     }
+
+    public String createKakaoToken(TokenType tokenType, KakaoUserDetails kakaoUserDetails) {
+        long currentTimeMillis = System.currentTimeMillis();
+        Date issuedAt = new Date(currentTimeMillis);
+        Date expirationDate = new Date(currentTimeMillis + tokenType.getExpireMs());
+
+        String token = Jwts.builder()
+                .claim("category", tokenType.name().toLowerCase())
+                .claim("email", kakaoUserDetails.getUsername()) // email 사용
+                .claim("role", "ROLE_USER") // 기본 역할
+                .setExpiration(expirationDate)
+                .setIssuedAt(issuedAt)
+                .signWith(key, signatureAlgorithm)
+                .compact();
+
+        return TokenType.ACCESS.equals(tokenType) ? BEARER_PREFIX + token : token;
+    }
+
 
     public String getCategory(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("category", String.class);
