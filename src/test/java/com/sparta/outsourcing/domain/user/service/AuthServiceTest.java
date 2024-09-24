@@ -6,6 +6,7 @@ import com.sparta.outsourcing.domain.user.dto.request.JoinRequest;
 import com.sparta.outsourcing.domain.user.dto.response.TokenResponse;
 import com.sparta.outsourcing.domain.user.entity.Role;
 import com.sparta.outsourcing.domain.user.entity.Status;
+import com.sparta.outsourcing.domain.user.entity.TokenType;
 import com.sparta.outsourcing.domain.user.entity.User;
 import com.sparta.outsourcing.domain.user.exception.DuplicateUserException;
 import com.sparta.outsourcing.domain.user.exception.InvalidTokenException;
@@ -65,11 +66,10 @@ class AuthServiceTest {
 
         when(userRepository.findByEmailIncludingWithdrawn(joinRequest.getEmail())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(joinRequest.getPassword())).thenReturn("encryptedPassword");
-        when(jwtUtil.createToken(eq("refresh"), any(CustomUserDetails.class), anyString(), anyLong()))
-                .thenReturn("Bearer refreshToken"); // refreshToken 반환
-        when(jwtUtil.createToken(eq("access"), any(CustomUserDetails.class), anyString(), anyLong()))
+        when(jwtUtil.createToken(any(TokenType.class), any(CustomUserDetails.class)))
+                .thenReturn("refreshToken"); // refreshToken 반환
+        when(jwtUtil.createToken(any(TokenType.class), any(CustomUserDetails.class)))
                 .thenReturn("Bearer accessToken"); // accessToken 반환
-        when(jwtUtil.substringToken(anyString())).thenReturn("refreshToken");
 
         // When
         TokenResponse tokenResponse = authService.join(joinRequest);
@@ -150,9 +150,8 @@ class AuthServiceTest {
         when(jwtUtil.getCategory(refreshToken)).thenReturn("refresh");
         when(jwtUtil.getCustomUserDetailsFromToken(refreshToken)).thenReturn(customUserDetails);
         when(refreshTokenService.getRefreshToken(customUserDetails.getEmail())).thenReturn("validRefreshToken");
-        when(jwtUtil.createToken(anyString(), any(CustomUserDetails.class), anyString(), anyLong()))
-                .thenReturn("Bearer newRefreshToken", "Bearer newAccessToken");
-        when(jwtUtil.substringToken(anyString())).thenReturn("newRefreshToken");
+        when(jwtUtil.createToken(any(TokenType.class), any(CustomUserDetails.class)))
+                .thenReturn("newRefreshToken", "Bearer newAccessToken");
 
         // When
         TokenDto tokenDto = authService.reissueAccessToken(refreshToken);
