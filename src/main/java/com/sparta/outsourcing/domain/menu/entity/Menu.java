@@ -60,6 +60,10 @@ public class Menu {
     }
 
     public void deleteMenu() {
+        if (this.deleted) {
+            throw new IllegalStateException("이미 삭제된 메뉴입니다");
+        }
+
         this.deleted = true;
     }
 
