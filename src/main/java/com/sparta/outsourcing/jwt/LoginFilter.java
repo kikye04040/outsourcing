@@ -3,6 +3,7 @@ package com.sparta.outsourcing.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import com.sparta.outsourcing.domain.user.dto.request.LoginRequest;
+import com.sparta.outsourcing.domain.user.entity.TokenType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,14 +56,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority(); // TODO: 어차피 customUserDetails 가 role 을 들고있기 때문에 필요 없음
-
-        String accessToken = jwtUtil.createToken("access", customUserDetails, role, 600000L);
-        String refreshTokenBearer = jwtUtil.createToken("refresh", customUserDetails, role, 86400000L);
-        String refreshToken = jwtUtil.substringToken(refreshTokenBearer); // TODO: createToken 의 반환이 Bearer 를 포함하지 않도록 할 것
+        String accessToken = jwtUtil.createToken(TokenType.ACCESS, customUserDetails);
+        String refreshToken = jwtUtil.createToken(TokenType.REFRESH, customUserDetails);
 
         response.setHeader("Authorization", accessToken);
         response.addCookie(createCooke("refresh", refreshToken));
