@@ -44,4 +44,27 @@ class StoresControllerTest {
             .build();
     }
 
+
+
+    @Test
+    void 전체_가게_조회_성공() {
+        // given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        List<StoresSimpleResponseDto> storeList = List.of(
+            new StoresSimpleResponseDto("황비홍 마라탕", "", 3000),
+            new StoresSimpleResponseDto("파스타", "Store 2", 2000)
+        );
+        Page<StoresSimpleResponseDto> page = new PageImpl<>(storeList);
+
+        when(storesService.getStores(anyInt(), anyInt())).thenReturn(page);
+
+        // when
+        ResponseEntity<Page<StoresSimpleResponseDto>> response = storesController.getStores(1, 10);
+
+        // then
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(2, response.getBody().getTotalElements());
+        verify(storesService, times(1)).getStores(anyInt(), anyInt());
+    }
+
 }
