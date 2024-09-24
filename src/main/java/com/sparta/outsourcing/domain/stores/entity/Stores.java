@@ -36,16 +36,6 @@ public class Stores {
 
     private int deliveryTip;
 
-    private int minDeliveryTime;
-
-    private int maxDeliveryTime;
-
-    private DecimalFormat rating;
-
-    private int dibsCount;
-
-    private int reviewCount;
-
     private String operationHours;
 
     private String closedDays;
@@ -87,8 +77,12 @@ public class Stores {
     }
 
 
-    public void update(String name, String address, String storePictureUrl, String phone, String contents, int minDeliveryPrice, int deliveryTip, String operationHours, String closedDays) {
+    public void update(String name, int type, String category, String address,
+                       String storePictureUrl, String phone, String contents,
+                       int deliveryTip, String operationHours, String closedDays, int minDeliveryPrice) {
         this.name = name;
+        this.type = type;
+        this.category = category;
         this.address = address;
         this.phone = phone;
         this.contents = contents;

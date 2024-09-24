@@ -5,6 +5,7 @@ import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
 import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
+import com.sparta.outsourcing.domain.user.entity.Status;
 import com.sparta.outsourcing.domain.user.entity.User;
 import com.sparta.outsourcing.domain.user.repository.UserRepository;
 import com.sun.jdi.request.InvalidRequestStateException;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import static com.sparta.outsourcing.domain.user.entity.Role.ROLE_OWNER;
 
@@ -73,11 +76,7 @@ public class StoresService {
         return stores.map(req -> new StoresSimpleResponseDto(
             req.getName(),
             req.getStorePictureUrl(),
-            req.getDibsCount(),
-            req.getReviewCount(),
-            req.getDeliveryTip(),
-            req.getMinDeliveryTime(),
-            req.getMaxDeliveryTime()
+            req.getDeliveryTip()
         ));
     }
 
@@ -96,33 +95,39 @@ public class StoresService {
             req.getContents(),
             req.getMinDeliveryPrice(),
             req.getDeliveryTip(),
-            req.getMinDeliveryTime(),
-            req.getMaxDeliveryTime(),
-            req.getDibsCount(),
-            req.getReviewCount(),
             req.getOperationHours(),
             req.getClosedDays()
-            // 메뉴 목록 추가
         );
     }
 
     @Transactional
     public StoreResponseDto updateStore(long storeId, StoreUpdateRequestDto req) {
+        // 유저 상태 확인(NORMAL)
+        //Optional<User> user = userRepository.findByEmailAndStatus(userDetails.getEmail(), Status.NORMAL);
+//        if (user.isPresent()) { // 유저가 존재하고 활성화된 상태
+//        }
+        // 가게 존재 확인
         Stores stores = storesRepository.findById(storeId)
             .orElseThrow(() -> new InvalidRequestStateException("Store not found"));
 
+        // 가게 상태 확인
+
         stores.update(
             req.getName(),
+            req.getType(),
+            req.getCategory(),
             req.getAddress(),
             req.getStorePictureUrl(),
             req.getPhone(),
             req.getContents(),
-            req.getMinDeliveryPrice(),
             req.getDeliveryTip(),
             req.getOperationHours(),
-            req.getClosedDays()
+            req.getClosedDays(),
+            req.getMinDeliveryPrice()
         );
 
+        // 저장
+        storesRepository.save(stores);
         return new StoreResponseDto(
             "Store updated sucessfully",
             req.getName(),
@@ -140,6 +145,7 @@ public class StoresService {
         // 가게 담당자 일치 여부 확인
 
         stores.setStoreStatus(StoreStatus.Deleted);
+        storesRepository.save(stores);
 
         return new StoreResponseDto(
             "Store updated sucessfully",
@@ -158,11 +164,7 @@ public class StoresService {
         return storesList.map(req -> new StoresSimpleResponseDto(
             req.getName(),
             req.getStorePictureUrl(),
-            req.getDibsCount(),
-            req.getReviewCount(),
-            req.getDeliveryTip(),
-            req.getMinDeliveryTime(),
-            req.getMaxDeliveryTime()
+            req.getDeliveryTip()
         ));
     }
 
