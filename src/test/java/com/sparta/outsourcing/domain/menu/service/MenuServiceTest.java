@@ -1,6 +1,7 @@
 package com.sparta.outsourcing.domain.menu.service;
 
 import com.sparta.outsourcing.domain.menu.dto.request.MenuCreateRequestDto;
+import com.sparta.outsourcing.domain.menu.dto.request.MenuUpdateRequestDto;
 import com.sparta.outsourcing.domain.menu.dto.response.MenuResponseDto;
 import com.sparta.outsourcing.domain.menu.entity.Menu;
 import com.sparta.outsourcing.domain.menu.repository.MenuRepository;
@@ -114,9 +115,33 @@ public class MenuServiceTest {
     }
 
 
+    @Test
+    @DisplayName("getMenus 정상 작동")
+    void getMenus() {
+
+    }
+
+
+    @Test
+    @DisplayName("updateMenu 정상 작동")
+    void updateMenu() {
+
+        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(
+                "이미지 주소",
+                "이름",
+                "설명",
+                15000
+        );
+    }
+
+
+    @Test
+    @DisplayName("deleteMenu 정상 작동")
+    void deleteMenu() {
 
 
 
+    }
 
 
 }
