@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Table(name = "CustomerReview")
-public class CustomerReview {
+public class CustomerReview extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,10 +32,10 @@ public class CustomerReview {
     @Column
     private String reviewPictureUrl;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime modifiedAt;
 
     @Enumerated(EnumType.STRING)  // Enum을 문자열로 저장
@@ -43,15 +43,15 @@ public class CustomerReview {
     private StatusType status;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "orderId", nullable = false)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "storeId", nullable = false)
     private Stores store;
 
@@ -65,6 +65,8 @@ public class CustomerReview {
         this.status = StatusType.ACTIVATE;
         this.order = customerReviewRequestDto.getOrder();
         this.user = customerReviewRequestDto.getUser();
+        this.store = customerReviewRequestDto.getStore();
+        this.reviewPictureUrl = customerReviewRequestDto.getReviewPictureUrl();
     }
 
     public void update(CustomerReviewRequestDto customerReviewRequestDto) {

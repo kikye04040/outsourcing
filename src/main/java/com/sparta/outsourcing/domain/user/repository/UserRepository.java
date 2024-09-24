@@ -27,5 +27,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.email = :email")
     Optional<User> findByEmailIncludingWithdrawn(@Param("email") String email);
 
-
+    Optional<User> findById(Long id);
 }

@@ -1,4 +1,4 @@
-package com.sparta.outsourcing.review;
+package com.sparta.outsourcing.domain.review;
 
 import com.sparta.outsourcing.domain.menu.entity.Menu;
 import com.sparta.outsourcing.domain.order.entity.Order;

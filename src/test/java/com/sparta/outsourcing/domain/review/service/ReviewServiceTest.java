@@ -1,7 +1,8 @@
-package com.sparta.outsourcing.review.service;
+package com.sparta.outsourcing.domain.review.service;
 
 import com.sparta.outsourcing.domain.order.entity.Order;
 import com.sparta.outsourcing.domain.order.repository.OrderRepository;
+import com.sparta.outsourcing.domain.review.TestUtil;
 import com.sparta.outsourcing.domain.review.dto.CustomerReviewRequestDto;
 import com.sparta.outsourcing.domain.review.dto.CustomerReviewResponseDto;
 import com.sparta.outsourcing.domain.review.dto.OwnerReviewRequestDto;
@@ -10,13 +11,11 @@ import com.sparta.outsourcing.domain.review.entity.CustomerReview;
 import com.sparta.outsourcing.domain.review.entity.OwnerReview;
 import com.sparta.outsourcing.domain.review.repository.CustomerReviewRepository;
 import com.sparta.outsourcing.domain.review.repository.OwnerReviewRepository;
-import com.sparta.outsourcing.domain.review.service.ReviewService;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import com.sparta.outsourcing.domain.user.entity.Role;
 import com.sparta.outsourcing.domain.user.entity.User;
 import com.sparta.outsourcing.exception.BadRequestException;
-import com.sparta.outsourcing.review.TestUtil;
 import com.sparta.outsourcing.s3.ImageManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
