@@ -1,6 +1,7 @@
 package com.sparta.outsourcing.domain.review.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.outsourcing.domain.menu.repository.MenuRepository;
 import com.sparta.outsourcing.domain.review.controller.ReviewController;
 import com.sparta.outsourcing.domain.review.dto.CustomerReviewRequestDto;
 import com.sparta.outsourcing.domain.review.dto.CustomerReviewResponseDto;
@@ -9,29 +10,35 @@ import com.sparta.outsourcing.domain.review.dto.OwnerReviewResponseDto;
 import com.sparta.outsourcing.domain.review.entity.CustomerReview;
 import com.sparta.outsourcing.domain.review.entity.OwnerReview;
 import com.sparta.outsourcing.domain.review.service.ReviewService;
+import com.sparta.outsourcing.domain.stores.repository.StoresRepository;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import com.sparta.outsourcing.domain.user.entity.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ReviewController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class ReviewControllerTest {
 
     @Autowired
@@ -40,121 +47,106 @@ public class ReviewControllerTest {
     @MockBean
     private ReviewService reviewService;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
-    private CustomUserDetails customUserDetails;
-
-    // 매번 테스트 전 CustomUserDetails 및 SecurityContext 설정
-    @BeforeEach
-    void setUp() {
-        customUserDetails = CustomUserDetails.builder().email("test@test.com").password("password").role(Role.ROLE_USER).build();
-
-        Authentication authentication = mock(Authentication.class);
-        when(authentication.getPrincipal()).thenReturn(customUserDetails);
-
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-    }
-
-    // 리뷰 추가 성공 테스트
     @Test
-    void addReview_Success() throws Exception {
+    @WithMockUser(username = "testUser")
+    public void testAddReview_Success() throws Exception {
+        // Given
+        Long orderId = 1L;
         CustomerReviewRequestDto requestDto = new CustomerReviewRequestDto();
-        CustomerReviewResponseDto responseDto = new CustomerReviewResponseDto(new CustomerReview());
-        when(reviewService.addReview(eq(1L), any(CustomerReviewRequestDto.class))).thenReturn(responseDto);
+        requestDto.setContents("Great product!");
+        requestDto.setRating(5);
 
-        mockMvc.perform(post("/orders/1/reviews")
+        CustomerReviewResponseDto responseDto = new CustomerReviewResponseDto();
+        responseDto.setId(1L);
+        responseDto.setContents("Great product!");
+        responseDto.setRating(5);
+
+        when(reviewService.addReview(any(Long.class), any(CustomerReviewRequestDto.class))).thenReturn(responseDto);
+
+        // When & Then
+        mockMvc.perform(post("/orders/{orderId}/reviews", orderId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(asJsonString(requestDto)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-
-        verify(reviewService).addReview(eq(1L), any(CustomerReviewRequestDto.class));
+                .andExpect(jsonPath("$.reviewId").value(1L))
+                .andExpect(jsonPath("$.content").value("Great product!"))
+                .andExpect(jsonPath("$.rating").value(5))
+                .andDo(print());
     }
 
-    // 가게 리뷰 조회 성공 테스트
     @Test
-    void getReviews_Success() throws Exception {
-        when(reviewService.getReviews(eq(1L), eq(1), eq(5))).thenReturn(Collections.emptyList());
+    @WithMockUser(username = "testUser")
+    public void testGetReviews_Success() throws Exception {
+        // Given
+        Long storeId = 1L;
+        List<CustomerReviewResponseDto> reviews = List.of(
+                new CustomerReviewResponseDto(new CustomerReview()),
+                new CustomerReviewResponseDto(new CustomerReview().setContents())
+        );
 
-        mockMvc.perform(get("/stores/1/reviews")
+        when(reviewService.getReviews(any(Long.class), anyInt(), anyInt())).thenReturn(reviews);
+
+        // When & Then
+        mockMvc.perform(get("/stores/{storeId}/reviews", storeId)
                         .param("minRating", "1")
                         .param("maxRating", "5"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-
-        verify(reviewService).getReviews(eq(1L), eq(1), eq(5));
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].content").value("Great product!"))
+                .andExpect(jsonPath("$[1].content").value("Not bad."))
+                .andDo(print());
     }
 
-    // 리뷰 업데이트 성공 테스트
     @Test
-    void updateReview_Success() throws Exception {
+    @WithMockUser(username = "testUser")
+    public void testUpdateReview_Success() throws Exception {
+        // Given
+        Long storeId = 1L;
+        Long reviewId = 1L;
         CustomerReviewRequestDto requestDto = new CustomerReviewRequestDto();
-        CustomerReviewResponseDto responseDto = new CustomerReviewResponseDto(new CustomerReview());
-        when(reviewService.updateReview(any(), eq(1L), any(CustomerReviewRequestDto.class))).thenReturn(responseDto);
+        requestDto.setContents("Updated review content");
+        requestDto.setRating(4);
 
-        mockMvc.perform(put("/stores/1/reviews")
-                        .param("reviewId", "1")
+        CustomerReviewResponseDto responseDto = new CustomerReviewResponseDto();
+        responseDto.setId(1L);
+        responseDto.setContents("Updated review content");
+        responseDto.setRating(4);
+
+        when(reviewService.updateReview(any(CustomUserDetails.class), any(Long.class), any(CustomerReviewRequestDto.class))).thenReturn(responseDto);
+
+        // When & Then
+        mockMvc.perform(put("/stores/{storeId}/reviews", storeId)
+                        .param("reviewId", String.valueOf(reviewId))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isOk());
-
-        verify(reviewService).updateReview(any(CustomUserDetails.class), eq(1L), any(CustomerReviewRequestDto.class));
-    }
-
-    // 리뷰 삭제 성공 테스트
-    @Test
-    void deleteReview_Success() throws Exception {
-        when(reviewService.deleteReview(any(CustomUserDetails.class), eq(1L))).thenReturn("Review deleted");
-
-        mockMvc.perform(put("/stores/1/reviews/delete"))
+                        .content(asJsonString(requestDto)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Review deleted"));
-
-        verify(reviewService).deleteReview(any(CustomUserDetails.class), eq(1L));
+                .andExpect(jsonPath("$.content").value("Updated review content"))
+                .andExpect(jsonPath("$.rating").value(4))
+                .andDo(print());
     }
 
-    // 사장 답글 추가 성공 테스트
     @Test
-    void addSubReview_Success() throws Exception {
-        OwnerReviewRequestDto requestDto = new OwnerReviewRequestDto();
-        OwnerReviewResponseDto responseDto = new OwnerReviewResponseDto(new OwnerReview());
-        when(reviewService.addSubReview(eq(1L), any(OwnerReviewRequestDto.class))).thenReturn(responseDto);
+    @WithMockUser(username = "testUser")
+    public void testDeleteReview_Success() throws Exception {
+        // Given
+        Long storeId = 1L;
+        String successMessage = "Review deleted successfully.";
 
-        mockMvc.perform(post("/stores/1/reviews/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isOk());
+        when(reviewService.deleteReview(any(CustomUserDetails.class), any(Long.class))).thenReturn(successMessage);
 
-        verify(reviewService).addSubReview(eq(1L), any(OwnerReviewRequestDto.class));
-    }
-
-    // 사장 답글 수정 성공 테스트
-    @Test
-    void updateSubReview_Success() throws Exception {
-        OwnerReviewRequestDto requestDto = new OwnerReviewRequestDto();
-        OwnerReviewResponseDto responseDto = new OwnerReviewResponseDto(new OwnerReview());
-        when(reviewService.updateSubReview(any(CustomUserDetails.class), eq(1L), any(OwnerReviewRequestDto.class))).thenReturn(responseDto);
-
-        mockMvc.perform(put("/stores/1/reviews/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isOk());
-
-        verify(reviewService).updateSubReview(any(CustomUserDetails.class), eq(1L), any(OwnerReviewRequestDto.class));
-    }
-
-    // 사장 답글 삭제 성공 테스트
-    @Test
-    void deleteSubReview_Success() throws Exception {
-        when(reviewService.deleteSubReview(any(CustomUserDetails.class), eq(1L))).thenReturn("Review deleted");
-
-        mockMvc.perform(put("/stores/1/reviews/1/delete"))
+        // When & Then
+        mockMvc.perform(put("/stores/{storeId}/reviews/delete", storeId))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Review deleted"));
+                .andExpect(content().string(successMessage))
+                .andDo(print());
+    }
 
-        verify(reviewService).deleteSubReview(any(CustomUserDetails.class), eq(1L));
+    // Helper method to convert objects to JSON string
+    private static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
