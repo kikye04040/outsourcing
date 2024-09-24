@@ -1,5 +1,7 @@
 package com.sparta.outsourcing.domain.stores.service;
 
+import com.sparta.outsourcing.domain.menu.dto.response.MenuResponseDto;
+import com.sparta.outsourcing.domain.menu.entity.Menu;
 import com.sparta.outsourcing.domain.stores.dto.*;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.stores.enums.StoreStatus;
@@ -17,7 +19,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.sparta.outsourcing.domain.user.entity.Role.ROLE_OWNER;
 
@@ -85,6 +89,11 @@ public class StoresService {
         Stores req = storesRepository.findById(storeId)
             .orElseThrow(() -> new InvalidRequestStateException("Store not found"));
 
+        // 가게와 연결된 메뉴 리스트를 가져와서 StoreDetailResponseDto로 변환
+        List<MenuResponseDto> menuList = req.getMenu().stream()
+            .map(menu -> new MenuResponseDto(menu.getMenuPictureUrl(), menu.getName(), menu.getDescription(), menu.getPrice()))
+            .collect(Collectors.toList());
+
         return new StoreDetailResponseDto(
             req.getName(),
             req.getType(),
@@ -96,7 +105,8 @@ public class StoresService {
             req.getMinDeliveryPrice(),
             req.getDeliveryTip(),
             req.getOperationHours(),
-            req.getClosedDays()
+            req.getClosedDays(),
+            menuList
         );
     }
 
