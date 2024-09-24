@@ -29,6 +29,6 @@ public class TestUtil {
     }
 
     public static Stores createMockStores(User user) {
-        return new Stores("", 0, "", "", "", "" ,"", 0, "", "",user);
+        return new Stores("", 0, "", "", "", "" ,"", 0, "", "",user,0);
     }
 }
