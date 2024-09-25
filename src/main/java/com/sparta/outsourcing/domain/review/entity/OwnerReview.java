@@ -36,7 +36,7 @@ public class OwnerReview extends Timestamped {
     @Column(nullable = false)
     private StatusType status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
@@ -45,9 +45,11 @@ public class OwnerReview extends Timestamped {
     private CustomerReview customerReview;
 
 
-    public OwnerReview(OwnerReviewRequestDto ownerReviewRequestDto) {
+    public OwnerReview(OwnerReviewRequestDto ownerReviewRequestDto, CustomerReview customerReview, User user) {
         this.contents = ownerReviewRequestDto.getContents();
         this.status = StatusType.ACTIVATE;
+        this.customerReview = customerReview;
+        this.user = user;
     }
 
     public void update(OwnerReviewRequestDto ownerReviewRequestDto) {

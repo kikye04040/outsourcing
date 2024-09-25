@@ -11,4 +11,5 @@ public class SearchRequestDto {
         this.keyword = keyword;
     }
 
+    public SearchRequestDto() {}
 }

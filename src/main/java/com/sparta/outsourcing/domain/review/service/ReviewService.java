@@ -1,5 +1,6 @@
 package com.sparta.outsourcing.domain.review.service;
 
+import com.amazonaws.services.s3.model.Owner;
 import com.sparta.outsourcing.domain.order.entity.Order;
 import com.sparta.outsourcing.domain.order.repository.OrderRepository;
 import com.sparta.outsourcing.domain.review.dto.OwnerReviewRequestDto;
@@ -86,9 +87,10 @@ public class ReviewService {
     public CustomerReviewResponseDto updateReview(CustomUserDetails customUserDetails, Long reviewId, CustomerReviewRequestDto customerReviewRequestDto) {
 
         CustomerReview customerReview = customerReviewRepository.findById(reviewId).orElseThrow(() -> new BadRequestException("Review not found"));
+        String email = customerReview.getUser().getEmail();
 
         // 작성자와 현재 로그인한 사용자가 일치하는지
-        if(customUserDetails.getEmail() != customerReview.getUser().getEmail()) {
+        if(!customUserDetails.getEmail().equals(email)) {
             throw new BadRequestException("Email does not match");
         }
 
@@ -108,9 +110,10 @@ public class ReviewService {
     @Transactional
     public String deleteReview(CustomUserDetails customUserDetails, Long reviewId) {
         CustomerReview customerReview = customerReviewRepository.findById(reviewId).orElseThrow(() -> new BadRequestException("Review not found"));
+        String email = customerReview.getUser().getEmail();
 
         // 작성자와 현재 로그인한 사용자가 일치하는지
-        if(customUserDetails.getEmail() != customerReview.getUser().getEmail()) {
+        if(!customUserDetails.getEmail().equals(email)) {
             throw new BadRequestException("Email does not match");
         }
 
@@ -123,12 +126,11 @@ public class ReviewService {
     /*----------------------------------------------------------------------------------------------------------------*/
 
     // 사장 리뷰 작성
-    public OwnerReviewResponseDto addSubReview(Long reviewId, OwnerReviewRequestDto ownerReviewRequestDto) {
+    public OwnerReviewResponseDto addSubReview(Long reviewId, OwnerReviewRequestDto ownerReviewRequestDto, CustomUserDetails customUserDetails) {
 
         CustomerReview customerReview = customerReviewRepository.findById(reviewId).orElseThrow(() -> new BadRequestException("Customer Review not found"));
-
-        ownerReviewRequestDto.setCustomerReview(customerReview);
-        OwnerReview ownerReview =  new OwnerReview(ownerReviewRequestDto);
+        User user = userRepository.findByEmail(customUserDetails.getEmail()).orElseThrow();
+        OwnerReview ownerReview =  new OwnerReview(ownerReviewRequestDto, customerReview, user);
         OwnerReview saved = ownerReviewRepository.save(ownerReview);
 
         return new OwnerReviewResponseDto(saved);
@@ -139,13 +141,12 @@ public class ReviewService {
     public OwnerReviewResponseDto updateSubReview(CustomUserDetails customUserDetails, Long reviewId, OwnerReviewRequestDto ownerReviewRequestDto) {
 
         CustomerReview customerReview = customerReviewRepository.findById(reviewId).orElseThrow(() -> new BadRequestException("Customer Review not found"));
-
+        OwnerReview ownerReview = customerReview.getOwnerReview();
+        String email = ownerReview.getUser().getEmail();
         // 작성자와 현재 로그인한 사용자가 일치하는지
-        if(customUserDetails.getEmail() != customerReview.getUser().getEmail()) {
+        if(!customUserDetails.getEmail().equals(email)) {
             throw new BadRequestException("Email does not match");
         }
-
-        OwnerReview ownerReview = customerReview.getOwnerReview();
 
         ownerReview.update(ownerReviewRequestDto);
 
@@ -158,8 +159,9 @@ public class ReviewService {
 
         OwnerReview ownerReview = ownerReviewRepository.findById(reviewId).orElseThrow(() -> new BadRequestException("Customer Review not found"));
 
+        String email = ownerReview.getUser().getEmail();
         // 작성자와 현재 로그인한 사용자가 일치하는지
-        if(customUserDetails.getEmail() != ownerReview.getUser().getEmail()) {
+        if(!customUserDetails.getEmail().equals(email)) {
             throw new BadRequestException("Email does not match");
         }
 

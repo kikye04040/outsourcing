@@ -5,15 +5,14 @@ import com.sparta.outsourcing.domain.review.entity.CustomerReview;
 import com.sparta.outsourcing.domain.stores.entity.Stores;
 import com.sparta.outsourcing.domain.user.entity.User;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class OwnerReviewRequestDto {
 
-    private Long ownerReviewId;
     private String contents;
     private String status = "existed";
-
-    private CustomerReview customerReview;
 }

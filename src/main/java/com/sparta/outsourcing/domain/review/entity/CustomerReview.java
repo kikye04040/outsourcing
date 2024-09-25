@@ -55,7 +55,7 @@ public class CustomerReview extends Timestamped {
     @JoinColumn(name = "storeId", nullable = false)
     private Stores store;
 
-    @OneToOne(mappedBy = "customerReview", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "customerReview", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private OwnerReview ownerReview;
 
 
