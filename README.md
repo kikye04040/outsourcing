@@ -32,10 +32,10 @@ Spring Boot를 이용해 배달 앱의 기능을 구현한 서버입니다.
 - 이미지 조회
 
 ## 🔗 와이어 프레임
-- [피그마 와이어프레임]([https://www.figma.com/design/ojQlzmDOcEPbpL6xqw75Sw/%EB%89%B4%EC%8A%A4%ED%94%BC%EB%93%9C?t=mjPdfnULERRtgdII-0](https://www.figma.com/design/9xYi78CXCtNAzoKMgr8OGG/%EC%99%9C%EC%8B%AD%EC%9D%B4%EC%A1%B0_%EC%95%84%EC%9B%83%EC%86%8C%EC%8B%B1?node-id=0-1&node-type=canvas&t=1nPhNHjolfyoGrcP-0))
+- [피그마 와이어프레임](https://www.figma.com/design/9xYi78CXCtNAzoKMgr8OGG/%EC%99%9C%EC%8B%AD%EC%9D%B4%EC%A1%B0_%EC%95%84%EC%9B%83%EC%86%8C%EC%8B%B1?node-id=0-1&node-type=canvas&t=1nPhNHjolfyoGrcP-0)
 
 ## 📜 API 명세
     
 ## ERD
-![image](https://www.erdcloud.com/d/Pmn95TuNepX9jJCei)
+![image](https://www.notion.so/teamsparta/3d62824acdb74504bd8ae4852c60fc45?pvs=4#2afeb7af20fc4b75bf8b79e191dfe53b)
 
