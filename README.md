@@ -35,6 +35,10 @@ Spring Boot를 이용해 배달 앱의 기능을 구현한 서버입니다.
 - [피그마 와이어프레임](https://www.figma.com/design/9xYi78CXCtNAzoKMgr8OGG/%EC%99%9C%EC%8B%AD%EC%9D%B4%EC%A1%B0_%EC%95%84%EC%9B%83%EC%86%8C%EC%8B%B1?node-id=0-1&node-type=canvas&t=1nPhNHjolfyoGrcP-0)
 
 ## 📜 API 명세
+- [API 명세](https://documenter.getpostman.com/view/24053165/2sAXqwXyrg)
     
 ## ERD
 ![스크린샷 2024-09-25 105621](https://github.com/user-attachments/assets/1261fa7e-b9e7-4578-ba8c-dcf19bd0948f)
+
+## 팀 노션
+- [팀 노션](https://teamsparta.notion.site/3d62824acdb74504bd8ae4852c60fc45)
