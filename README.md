@@ -37,5 +37,4 @@ Spring Boot를 이용해 배달 앱의 기능을 구현한 서버입니다.
 ## 📜 API 명세
     
 ## ERD
-![image](https://www.notion.so/teamsparta/3d62824acdb74504bd8ae4852c60fc45?pvs=4#2afeb7af20fc4b75bf8b79e191dfe53b)
-
+![스크린샷 2024-09-25 105621](https://github.com/user-attachments/assets/1261fa7e-b9e7-4578-ba8c-dcf19bd0948f)
