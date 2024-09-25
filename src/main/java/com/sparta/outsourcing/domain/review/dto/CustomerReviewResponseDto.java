@@ -2,10 +2,12 @@ package com.sparta.outsourcing.domain.review.dto;
 
 import com.sparta.outsourcing.domain.review.entity.CustomerReview;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class CustomerReviewResponseDto {
 
     private Long id;

@@ -4,6 +4,7 @@ import com.sparta.outsourcing.domain.order.dto.OrderRequestDto;
 import com.sparta.outsourcing.domain.order.dto.OrderResponseDto;
 import com.sparta.outsourcing.domain.order.dto.OrderStatusUpdateRequestDto;
 import com.sparta.outsourcing.domain.order.entity.Order;
+import com.sparta.outsourcing.domain.order.enums.OrderStatusEnum;
 import com.sparta.outsourcing.domain.order.service.OrderService;
 import com.sparta.outsourcing.domain.user.dto.CustomUserDetails;
 import com.sparta.outsourcing.domain.user.entity.Role;
@@ -55,8 +56,10 @@ public class OrderController {
             throw new ForbiddenException("인증된 사장님이 아닙니다.");
         }
 
+        OrderStatusEnum status = OrderStatusEnum.valueOf(requestDto.getStatus());
+
         // 주문 상태 변경
-        orderService.updateOrderStatus(orderId, requestDto.getStatus());
+        orderService.updateOrderStatus(orderId, status);
         return ResponseEntity.ok("주문 상태가 성공적으로 업데이트 되었습니다.");
     }
 }

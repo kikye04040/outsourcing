@@ -17,7 +17,7 @@ public class SearchController {
 
     @GetMapping("/search")
     public SearchResponseDto search(@RequestBody SearchRequestDto searchRequestDto,
-                                    @RequestParam Pageable pageable) {
+                                    @RequestParam(required = false) Pageable pageable) {
 
         return searchService.searchByKeyword(searchRequestDto, pageable);
     }

@@ -49,8 +49,9 @@ public class ReviewController {
     @PutMapping("/stores/{storeId}/reviews")
     public ResponseEntity<?> updateReview(@RequestParam(value = "reviewId") Long reviewId,
                                           @AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                          @RequestPart CustomerReviewRequestDto customerReviewRequestDto) {
-
+                                          @RequestPart(name = "dto") CustomerReviewRequestDto customerReviewRequestDto,
+                                          @RequestPart(name = "image", required = false) MultipartFile reviewImage) {
+        customerReviewRequestDto.setReviewPicture(reviewImage);
         CustomerReviewResponseDto customerReviewResponseDto = reviewService.updateReview(customUserDetails, reviewId, customerReviewRequestDto);
 
         return ResponseEntity.ok(customerReviewResponseDto);
@@ -72,9 +73,10 @@ public class ReviewController {
     // 사장 리뷰 작성
     @PostMapping("/stores/{storeId}/reviews/{reviewId}")
     public ResponseEntity<?> addSubReview(@PathVariable(name = "reviewId") Long reviewId,
-                                          @RequestBody OwnerReviewRequestDto ownerReviewRequestDto) {
+                                          @RequestBody OwnerReviewRequestDto ownerReviewRequestDto,
+                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
-        OwnerReviewResponseDto ownerReviewResponseDto = reviewService.addSubReview(reviewId, ownerReviewRequestDto);
+        OwnerReviewResponseDto ownerReviewResponseDto = reviewService.addSubReview(reviewId, ownerReviewRequestDto, customUserDetails);
         return ResponseEntity.ok("");
     }
 
@@ -85,7 +87,7 @@ public class ReviewController {
                                              @AuthenticationPrincipal CustomUserDetails customUserDetails,
                                              @RequestBody OwnerReviewRequestDto ownerReviewRequestDto) {
         OwnerReviewResponseDto ownerReviewResponseDto = reviewService.updateSubReview(customUserDetails, reviewId, ownerReviewRequestDto);
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(ownerReviewResponseDto);
     }
 
 

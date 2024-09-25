@@ -38,16 +38,19 @@ public class StoresController {
         return ResponseEntity.ok(storesService.searchStores(keyword, page, size));
     }
 
+    // 가게 단일 조회
     @GetMapping("/stores/{storeId}")
     public ResponseEntity<StoreDetailResponseDto> getStore(@PathVariable Long storeId){
         return ResponseEntity.ok(storesService.getStore(storeId));
     }
 
+    // 가게 수정
     @PutMapping("/stores/{storeId}")
     public StoreResponseDto updateStore(@PathVariable long storeId, @RequestBody StoreUpdateRequestDto storeUpdateRequestDto){
         return storesService.updateStore(storeId, storeUpdateRequestDto);
     }
 
+    // 가게 삭제
     @DeleteMapping("/stores/{storeId}")
     public StoreResponseDto deleteStore(@PathVariable long storeId){
         return storesService.deleteStore(storeId);

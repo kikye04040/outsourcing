@@ -3,12 +3,14 @@ package com.sparta.outsourcing.domain.review.dto;
 import com.sparta.outsourcing.domain.review.entity.CustomerReview;
 import com.sparta.outsourcing.domain.review.entity.OwnerReview;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class OwnerReviewResponseDto {
 
     private Long id;
